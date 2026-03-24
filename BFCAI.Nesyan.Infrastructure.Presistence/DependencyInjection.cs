@@ -18,6 +18,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence
             services.AddDbContext<StoreContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped(typeof(IStoreContextInitializer), typeof(StoreContextinitializer));
+            services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork.UnitOfWork)); 
             return services;
         }
 

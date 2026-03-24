@@ -15,6 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BFCAI.Nesyan.Application\BFCAI.Nesyan.Application.csproj" />
+    <ProjectReference Include="..\BFCAI.Nesyan.Controllers\BFCAI.Nesyan.Controllers.csproj" />
     <ProjectReference Include="..\BFCAI.Nesyan.Infrastructure.Presistence\BFCAI.Nesyan.Infrastructure.Presistence.csproj" />
   </ItemGroup>
 

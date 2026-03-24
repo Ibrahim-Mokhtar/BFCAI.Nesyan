@@ -1,4 +1,4 @@
-﻿using BFCAI.Nesyan.Domain.Common;
+﻿using BFCAI.Nesyan.Domain.Entities.Common;
 using BFCAI.Nesyan.Domain.Entities.Primary.Doctor;
 using System;
 using System.Collections.Generic;

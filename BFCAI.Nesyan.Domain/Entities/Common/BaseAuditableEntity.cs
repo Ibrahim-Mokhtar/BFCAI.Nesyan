@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BFCAI.Nesyan.Domain.Common
+namespace BFCAI.Nesyan.Domain.Entities.Common
 {
     public class BaseAuditableEntity<TKey>:BaseEntity<TKey> 
         where TKey : IEquatable<TKey>

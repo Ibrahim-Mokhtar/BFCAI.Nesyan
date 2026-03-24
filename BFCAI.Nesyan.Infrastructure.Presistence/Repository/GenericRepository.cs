@@ -1,5 +1,5 @@
-﻿using BFCAI.Nesyan.Domain.Common;
-using BFCAI.Nesyan.Domain.Contracts;
+﻿using BFCAI.Nesyan.Domain.Contracts;
+using BFCAI.Nesyan.Domain.Entities.Common;
 using BFCAI.Nesyan.Infrastructure.Presistence.Data;
 using Microsoft.EntityFrameworkCore;
 using System;

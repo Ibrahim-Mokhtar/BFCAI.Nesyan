@@ -1,14 +1,8 @@
-﻿using BFCAI.Nesyan.Domain.Common;
-using BFCAI.Nesyan.Domain.Contracts;
-using BFCAI.Nesyan.Domain.Entities.Primary.Doctor;
+﻿using BFCAI.Nesyan.Domain.Contracts;
+using BFCAI.Nesyan.Domain.Entities.Common;
 using BFCAI.Nesyan.Infrastructure.Presistence.Data;
 using BFCAI.Nesyan.Infrastructure.Presistence.Repository;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BFCAI.Nesyan.Infrastructure.Presistence.UnitOfWork
 {
