@@ -1,4 +1,5 @@
-﻿using BFCAI.Nesyan.Infrastructure.Presistence.Data;
+﻿using BFCAI.Nesyan.Domain.Contracts;
+using BFCAI.Nesyan.Infrastructure.Presistence.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence
         {
             services.AddDbContext<StoreContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped(typeof(IStoreContextInitializer), typeof(StoreContextinitializer));
             return services;
         }
 

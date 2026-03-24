@@ -1,11 +1,13 @@
+using BFCAI.Nesyan.APIs.Extensions;
 using BFCAI.Nesyan.Infrastructure.Presistence;
 namespace BFCAI.Nesyan.APIs
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            
             #region Configure Services
             // Add services to the container.
             builder.Services.AddControllers();
@@ -18,6 +20,10 @@ namespace BFCAI.Nesyan.APIs
             #endregion
 
             var app = builder.Build();
+
+            #region Database Initialization
+            await app.InitializerStoreContextAsync();
+            #endregion  
 
             #region Configure Kestrel Middlewares
 
