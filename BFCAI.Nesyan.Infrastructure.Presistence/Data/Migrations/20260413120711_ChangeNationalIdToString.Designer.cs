@@ -4,6 +4,7 @@ using BFCAI.Nesyan.Infrastructure.Presistence.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    partial class StoreContextModelSnapshot : ModelSnapshot
+    [Migration("20260413120711_ChangeNationalIdToString")]
+    partial class ChangeNationalIdToString
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,122 +115,6 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Doctors");
-                });
-
-            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.Medications.Medication", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Dosage")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Frequency")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("LastModifiedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<int>("PatientId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ScheduleInstructions")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DoctorId");
-
-                    b.HasIndex("PatientId");
-
-                    b.ToTable("Medications");
-                });
-
-            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.MindGames.MindGame", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(1500)
-                        .HasColumnType("nvarchar(1500)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("ThumbnailUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MindGames");
-                });
-
-            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.MindGames.PatientMindGame", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AssignedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MindGameId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PatientId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MindGameId");
-
-                    b.HasIndex("PatientId");
-
-                    b.ToTable("PatientMindGames");
                 });
 
             modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.Patient.Patient", b =>
@@ -506,44 +393,6 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                     b.ToTable("DoctorPatients", (string)null);
                 });
 
-            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.Medications.Medication", b =>
-                {
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Doctor.Doctor", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patient.Patient", "Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
-
-                    b.Navigation("Patient");
-                });
-
-            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.MindGames.PatientMindGame", b =>
-                {
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.MindGames.MindGame", "MindGame")
-                        .WithMany("PatientAssignments")
-                        .HasForeignKey("MindGameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patient.Patient", "Patient")
-                        .WithMany("AssignedGames")
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MindGame");
-
-                    b.Navigation("Patient");
-                });
-
             modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.Relative.Relative", b =>
                 {
                     b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patient.Patient", "Patient")
@@ -595,15 +444,8 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.MindGames.MindGame", b =>
-                {
-                    b.Navigation("PatientAssignments");
-                });
-
             modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.Patient.Patient", b =>
                 {
-                    b.Navigation("AssignedGames");
-
                     b.Navigation("Relatives");
 
                     b.Navigation("TreatmentRequests");

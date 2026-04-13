@@ -1,4 +1,4 @@
-﻿using BFCAI.Nesyan.Domain.Entities.Common;
+using BFCAI.Nesyan.Domain.Entities.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ namespace BFCAI.Nesyan.Domain.Entities.Primary
     }
     public class User : BaseAuditableEntity<int>
     {
-        public int NationalId { get; set; }
+        public string NationalId { get; set; } = null!;
         public string FName { get; set; } = null!;
         public string LName { get; set; } = null!;
         public string UserName { get; set; } = null!;

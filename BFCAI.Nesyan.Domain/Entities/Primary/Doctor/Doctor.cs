@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +10,8 @@ namespace BFCAI.Nesyan.Domain.Entities.Primary.Doctor
     {
         public string GraduationDegree { get; set; } = null!;
         public string MedicalAssociationCard { get; set; } = null!;
+
+        // Navigation
+        public ICollection<Patient.Patient> Patients { get; set; } = new List<Patient.Patient>();
     }
 }
