@@ -1,4 +1,4 @@
-﻿using BFCAI.Nesyan.Domain.Contracts;
+using BFCAI.Nesyan.Domain.Contracts;
 using BFCAI.Nesyan.Domain.Entities.Common;
 using BFCAI.Nesyan.Infrastructure.Presistence.Data;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +14,8 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Repository
         where TEntity : BaseEntity<TKey>
         where TKey : IEquatable<TKey>
     {
+        public IQueryable<TEntity> GetTableNoTracking() => DbContext.Set<TEntity>().AsNoTracking();
+
         public async Task<IEnumerable<TEntity>> GetAllAsync(bool WithTracking = false)
             => WithTracking ? await DbContext.Set<TEntity>().ToListAsync() :
                await DbContext.Set<TEntity>().AsNoTracking().ToListAsync();

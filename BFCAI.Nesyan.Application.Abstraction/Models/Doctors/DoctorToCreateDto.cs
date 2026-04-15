@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -10,7 +10,7 @@ namespace BFCAI.Nesyan.Application.Abstraction.Models.Doctors
     public class DoctorToCreateDto
     {
 
-        public int NationalId { get; set; }
+        public string NationalId { get; set; } = null!;
         public string FName { get; set; } = null!;
         public string LName { get; set; } = null!;
         public string UserName { get; set; } = null!;
