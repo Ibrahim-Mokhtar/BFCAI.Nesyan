@@ -39,11 +39,11 @@ namespace BFCAI.Nesyan.Controllers.Controllers.MindGames
         }
 
         [HttpPost("patient/{patientId}/assign/{gameId}")]
-        public async Task<ActionResult> AssignGameToPatient(int patientId, int gameId)
+        public async Task<ActionResult> AssignGameToPatient(int patientId, int gameId, [FromBody] AssignMindGameDto dto)
         {
             try
             {
-                await MindGamesService.AssignGameToPatientAsync(patientId, gameId);
+                await MindGamesService.AssignGameToPatientAsync(patientId, gameId, dto);
                 return Ok(new { Message = "Game assigned successfully" });
             }
             catch (Exception ex)

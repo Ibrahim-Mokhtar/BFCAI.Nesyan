@@ -4,23 +4,16 @@ namespace BFCAI.Nesyan.Application.Abstraction.Models.TreatmentRequests
 {
     public class TreatmentRequestToCreateDto
     {
-        [Required]
-        public string MemoryLossFrequency { get; set; } = null!;
-        [Required]
-        public string ConfusionFrequency { get; set; } = null!;
-        [Required]
-        public string LanguageProblems { get; set; } = null!;
-        [Required]
-        public string MoodChanges { get; set; } = null!;
-        [Required]
-        public string RepetitiveBehavior { get; set; } = null!;
-
-        [Required]
+        [Range(1, int.MaxValue)]
         public int PatientId { get; set; }
-        
-        [Required]
+
+        [Range(1, int.MaxValue)]
         public int DoctorId { get; set; }
 
-        public int? RelativeId { get; set; }
+        [Range(1, int.MaxValue)]
+        public int RelativeId { get; set; }
+
+        public DateTime? RequestDate { get; set; }
+        public string? Notes { get; set; }
     }
 }

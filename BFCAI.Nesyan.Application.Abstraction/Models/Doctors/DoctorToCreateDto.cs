@@ -9,7 +9,6 @@ namespace BFCAI.Nesyan.Application.Abstraction.Models.Doctors
 {
     public class DoctorToCreateDto
     {
-
         public string NationalId { get; set; } = null!;
         public string FName { get; set; } = null!;
         public string LName { get; set; } = null!;
@@ -22,9 +21,5 @@ namespace BFCAI.Nesyan.Application.Abstraction.Models.Doctors
         public int Age { get; set; }
         public string GraduationDegree { get; set; } = null!;
         public string MedicalAssociationCard { get; set; } = null!;
-        public string? CreatedBy { get; set; }
-        public DateTime CreatedOn { get; set; }
-        public string? LastModifiedBy { get; set; }
-        public DateTime LastModifiedOn { get; set; }
     }
 }

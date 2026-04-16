@@ -4,6 +4,7 @@ using BFCAI.Nesyan.Application.Abstraction.Services.TreatmentRequests;
 using BFCAI.Nesyan.Domain.Contracts;
 using BFCAI.Nesyan.Domain.Entities.Primary.Doctor;
 using BFCAI.Nesyan.Domain.Entities.Primary.Patient;
+using BFCAI.Nesyan.Domain.Entities.Primary.Relative;
 using BFCAI.Nesyan.Domain.Entities.Relations.Primary;
 
 namespace BFCAI.Nesyan.Application.Services.TreatmentRequests
@@ -12,8 +13,22 @@ namespace BFCAI.Nesyan.Application.Services.TreatmentRequests
     {
         public async Task<TreatmentRequestToReturnDto> CreateRequestAsync(TreatmentRequestToCreateDto dto)
         {
+            var patientRepo = UnitOfWork.GetRepository<Patient, int>();
+            var doctorRepo = UnitOfWork.GetRepository<Doctor, int>();
+            var relativeRepo = UnitOfWork.GetRepository<Relative, int>();
+
+            if (await patientRepo.Get(dto.PatientId) is null)
+                throw new Exception("Patient not found");
+
+            if (await doctorRepo.Get(dto.DoctorId) is null)
+                throw new Exception("Doctor not found");
+
+            if (await relativeRepo.Get(dto.RelativeId) is null)
+                throw new Exception("Relative not found");
+
             var request = Mapper.Map<RelativeDoctorRequest>(dto);
             request.Status = RequestStatus.Pending;
+            request.RequestDate = dto.RequestDate ?? DateTime.UtcNow;
             request.CreatedOn = DateTime.UtcNow;
             request.CreatedBy = "System";
             request.LastModifiedOn = DateTime.UtcNow;
@@ -88,7 +103,12 @@ namespace BFCAI.Nesyan.Application.Services.TreatmentRequests
         private async Task<TreatmentRequestToReturnDto> GetMappedRequestDto(int id)
         {
             var request = await UnitOfWork.GetRepository<RelativeDoctorRequest, int>().Get(id);
+            if (request is null)
+                throw new Exception("Request not found");
+
             var patient = await UnitOfWork.GetRepository<Patient, int>().Get(request.PatientId);
+            var doctor = await UnitOfWork.GetRepository<Doctor, int>().Get(request.DoctorId);
+            var relative = await UnitOfWork.GetRepository<Relative, int>().Get(request.RelativeId);
 
             var dto = Mapper.Map<TreatmentRequestToReturnDto>(request);
             if (patient != null)
@@ -96,6 +116,13 @@ namespace BFCAI.Nesyan.Application.Services.TreatmentRequests
                 dto.PatientName = $"{patient.FName} {patient.LName}";
                 dto.PatientAge = patient.Age;
             }
+
+            if (doctor != null)
+                dto.DoctorName = $"{doctor.FName} {doctor.LName}";
+
+            if (relative != null)
+                dto.RelativeName = $"{relative.FName} {relative.LName}";
+
             return dto;
         }
     }

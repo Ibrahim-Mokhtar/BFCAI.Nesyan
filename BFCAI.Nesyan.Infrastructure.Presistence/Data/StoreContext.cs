@@ -1,4 +1,5 @@
 using BFCAI.Nesyan.Domain.Entities.Alerts;
+using BFCAI.Nesyan.Domain.Entities.Medications;
 using BFCAI.Nesyan.Domain.Entities.MindGames;
 using BFCAI.Nesyan.Domain.Entities.Primary.Doctor;
 using BFCAI.Nesyan.Domain.Entities.Primary.Patient;
@@ -39,10 +40,10 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
         public DbSet<MindGame>MindGames { get; set; }
         public DbSet<MindGameSession>MindGameSessions { get; set; }
         public DbSet<Report>Reports { get; set; }
+        public DbSet<Medication> Medications { get; set; }
 
 
         //public DbSet<TreatmentRequest> TreatmentRequests { get; set; }
-        //public DbSet<Medication> Medications { get; set; }
         //public DbSet<MindGame> MindGames { get; set; }
         //public DbSet<PatientMindGame> PatientMindGames { get; set; }
     }

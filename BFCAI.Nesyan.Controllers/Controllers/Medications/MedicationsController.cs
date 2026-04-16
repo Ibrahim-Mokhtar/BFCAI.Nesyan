@@ -20,7 +20,7 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Medications
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(ex.InnerException?.Message ?? ex.Message);
             }
         }
 
@@ -34,7 +34,7 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Medications
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
             }
         }
 
@@ -48,7 +48,7 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Medications
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(ex.InnerException?.Message ?? ex.Message);
             }
         }
     }

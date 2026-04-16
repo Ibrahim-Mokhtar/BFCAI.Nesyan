@@ -43,18 +43,34 @@ namespace BFCAI.Nesyan.Application.Services.MindGames
             return dtos;
         }
 
-        public async Task AssignGameToPatientAsync(int patientId, int gameId)
+        public async Task AssignGameToPatientAsync(int patientId, int gameId, AssignMindGameDto dto)
         {
             var repo = UnitOfWork.GetRepository<MindGameSession, int>();
+            var doctorRepo = UnitOfWork.GetRepository<BFCAI.Nesyan.Domain.Entities.Primary.Doctor.Doctor, int>();
+            var patientRepo = UnitOfWork.GetRepository<BFCAI.Nesyan.Domain.Entities.Primary.Patient.Patient, int>();
+            var gameRepo = UnitOfWork.GetRepository<MindGame, int>();
 
             var allAssignments = await repo.GetAllAsync(false);
             var existing = allAssignments.FirstOrDefault(x => x.PatientId == patientId && x.MindGameId == gameId);
             if (existing != null) throw new Exception("Game already assigned to this patient.");
 
+            if (await patientRepo.Get(patientId) is null)
+                throw new Exception("Patient not found.");
+
+            if (await gameRepo.Get(gameId) is null)
+                throw new Exception("Mind game not found.");
+
+            if (await doctorRepo.Get(dto.DoctorId) is null)
+                throw new Exception("Doctor not found.");
+
             var assignment = new MindGameSession
             {
+                DoctorId = dto.DoctorId,
                 PatientId = patientId,
                 MindGameId = gameId,
+                AddedDate = DateTime.UtcNow,
+                StartDate = dto.StartDate,
+                Frequency = dto.Frequency,
                 CreatedOn = DateTime.UtcNow
             };
 

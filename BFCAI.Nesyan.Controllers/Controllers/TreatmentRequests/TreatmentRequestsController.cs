@@ -10,8 +10,15 @@ namespace BFCAI.Nesyan.Controllers.Controllers.TreatmentRequests
         [HttpPost]
         public async Task<ActionResult<TreatmentRequestToReturnDto>> CreateRequest(TreatmentRequestToCreateDto dto)
         {
-            var result = await Service.CreateRequestAsync(dto);
-            return Ok(result);
+            try
+            {
+                var result = await Service.CreateRequestAsync(dto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+            }
         }
 
         [HttpGet("doctor/{doctorId}/pending")]

@@ -39,10 +39,6 @@ namespace BFCAI.Nesyan.Application.Services.Patients
             var patient = await patientRepo.Get(patientId);
             if (patient == null) throw new Exception("Patient not found");
 
-            var medRepo = UnitOfWork.GetRepository<MindGameSession, int>();
-            var allMeds = await medRepo.GetAllAsync(false);
-            var meds = allMeds.Where(m => m.PatientId == patientId).ToList();
-
             var pgRepo = UnitOfWork.GetRepository<MindGameSession, int>();
             var gameRepo = UnitOfWork.GetRepository<MindGame, int>();
 
@@ -58,8 +54,7 @@ namespace BFCAI.Nesyan.Application.Services.Patients
             }
 
             var profileDto = Mapper.Map<PatientFullProfileDto>(patient);
-            //profileDto.Medications = Mapper.Map<IEnumerable<MedicationToReturnDto>>(meds);
-            //profileDto.AssignedGames = gameDtos;
+            profileDto.AssignedGames = gameDtos;
 
             return profileDto;
         }

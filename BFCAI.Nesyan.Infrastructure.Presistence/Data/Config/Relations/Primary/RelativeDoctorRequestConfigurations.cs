@@ -44,6 +44,11 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Config.Relations.Primary
                    .HasDefaultValueSql("GETUTCDATE()")
                    .IsRequired();
 
+            builder.Ignore(r => r.CreatedBy);
+            builder.Ignore(r => r.CreatedOn);
+            builder.Ignore(r => r.LastModifiedBy);
+            builder.Ignore(r => r.LastModifiedOn);
+
             builder.HasIndex(r => r.PatientId)
                    .IsUnique()
                    .HasFilter("[Status] = 'Selected'");

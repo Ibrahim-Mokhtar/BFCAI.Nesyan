@@ -17,6 +17,8 @@ internal class MindGameSessionConfigurations : BaseEntityConfigurations<MindGame
 {
     public override void Configure(EntityTypeBuilder<MindGameSession> builder)
     {
+        builder.HasKey(x => x.Id);
+
         builder.HasOne(x => x.Doctor)
                .WithMany()
                .HasForeignKey(x => x.DoctorId)
@@ -42,6 +44,11 @@ internal class MindGameSessionConfigurations : BaseEntityConfigurations<MindGame
         builder.Property(x => x.Frequency)
                .IsRequired()
                .HasMaxLength(50);
+
+        builder.Ignore(x => x.CreatedBy);
+        builder.Ignore(x => x.CreatedOn);
+        builder.Ignore(x => x.LastModifiedBy);
+        builder.Ignore(x => x.LastModifiedOn);
 
         builder.HasIndex(x => new { x.PatientId, x.MindGameId });
     }

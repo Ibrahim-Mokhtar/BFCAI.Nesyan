@@ -13,7 +13,22 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Config.MindGames
     {
         public override void Configure(EntityTypeBuilder<MindGame> builder)
         {
-            base.Configure(builder);
+            builder.Property(x => x.Name)
+                .IsRequired();
+
+            builder.Property(x => x.Category)
+                .IsRequired();
+
+            builder.Property(x => x.Brief)
+                .IsRequired();
+
+            builder.Property(x => x.TargetMetrics)
+                .IsRequired();
+
+            builder.Ignore(x => x.CreatedBy);
+            builder.Ignore(x => x.CreatedOn);
+            builder.Ignore(x => x.LastModifiedBy);
+            builder.Ignore(x => x.LastModifiedOn);
         }
     }
 }

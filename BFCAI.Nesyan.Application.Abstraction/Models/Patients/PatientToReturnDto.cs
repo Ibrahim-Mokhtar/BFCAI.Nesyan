@@ -11,7 +11,9 @@ namespace BFCAI.Nesyan.Application.Abstraction.Models.Patients
         public string Gender { get; set; } = null!;
         public int CurrentStage { get; set; }
         public string CurrentStageName { get; set; } = null!;
-    // Adding optional dates for LastVisit if needed
-        public DateTime? LastVisit { get; set; }
+        public double Height { get; set; }
+        public double Weight { get; set; }
+        public string BloodType { get; set; } = null!;
+        public string ChronicDisease { get; set; } = null!;
     }
 }

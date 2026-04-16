@@ -8,7 +8,7 @@ namespace BFCAI.Nesyan.Application.Abstraction.Services.MindGames
     {
         Task<IEnumerable<MindGameDto>> GetGameCatalogAsync();
         Task<IEnumerable<PatientMindGameDto>> GetPatientGamesAsync(int patientId);
-        Task AssignGameToPatientAsync(int patientId, int gameId);
+        Task AssignGameToPatientAsync(int patientId, int gameId, AssignMindGameDto dto);
         Task RemoveGameFromPatientAsync(int patientId, int gameId);
     }
 }
