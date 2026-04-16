@@ -3,6 +3,9 @@ using BFCAI.Nesyan.APIs.Extensions;
 using BFCAI.Nesyan.Application;
 using BFCAI.Nesyan.Infrastructure.Presistence;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace BFCAI.Nesyan.APIs
 {
@@ -23,6 +26,21 @@ namespace BFCAI.Nesyan.APIs
 
             builder.Services.AddPresistenceService(builder.Configuration);
             builder.Services.AddApplicationService();
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:AccessKey"]!)),
+                        ValidateIssuer = true,
+                        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+                        ValidateAudience = true,
+                        ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                        ValidateLifetime = false // No expire date to the token as requested
+                    };
+                });
             #endregion
 
             var app = builder.Build();
@@ -42,6 +60,7 @@ namespace BFCAI.Nesyan.APIs
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

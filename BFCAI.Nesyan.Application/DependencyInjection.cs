@@ -7,6 +7,8 @@ using BFCAI.Nesyan.Application.Abstraction.Services.Medications;
 using BFCAI.Nesyan.Application.Services.Medications;
 using BFCAI.Nesyan.Application.Abstraction.Services.MindGames;
 using BFCAI.Nesyan.Application.Services.MindGames;
+using BFCAI.Nesyan.Application.Abstraction.Services.Auth;
+using BFCAI.Nesyan.Application.Services.Auth;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -31,6 +33,7 @@ namespace BFCAI.Nesyan.Application
             services.AddScoped(typeof(IPatientService), typeof(PatientService));
             services.AddScoped(typeof(IMedicationService), typeof(MedicationService));
             services.AddScoped(typeof(IMindGamesService), typeof(MindGamesService));
+            services.AddScoped(typeof(IAuthService), typeof(AuthService));
             return services;
         }
     }
