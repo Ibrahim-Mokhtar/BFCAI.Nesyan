@@ -1,4 +1,4 @@
-﻿using BFCAI.Nesyan.Application.Abstraction.Services.Auth;
+using BFCAI.Nesyan.Application.Abstraction.Services.Auth;
 using BFCAI.Nesyan.Application.Abstraction.Services.Doctors;
 using BFCAI.Nesyan.Application.Abstraction.Services.Medications;
 using BFCAI.Nesyan.Application.Abstraction.Services.MindGames;
@@ -20,6 +20,7 @@ namespace BFCAI.Nesyan.Application.Abstraction.Services
         public ITreatmentRequestService TreatmentRequestService { get; }
         public IMindGamesService MindGamesService { get; }
         public IAuthService AuthService { get; }
-        
+        public BFCAI.Nesyan.Application.Abstraction.Services.Relatives.IRelativeService RelativeService { get; }
+        public BFCAI.Nesyan.Application.Abstraction.Services.Caregivers.ICaregiverService CaregiverService { get; }
     }
 }

@@ -1,0 +1,76 @@
+using BFCAI.Nesyan.Application.Abstraction.Models.Caregivers;
+using BFCAI.Nesyan.Application.Abstraction.Services;
+using BFCAI.Nesyan.Controllers.Controllers.Base;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace BFCAI.Nesyan.Controllers.Controllers.Caregivers
+{
+    public class CaregiversController(IServiceManager serviceManager) : BaseApiController
+    {
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CaregiverToReturnDto>>> GetCaregivers()
+        {
+            var caregivers = await serviceManager.CaregiverService.GetCaregiversAsync();
+            return Ok(caregivers);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CaregiverToReturnDto>> GetCaregiver(int id)
+        {
+            try
+            {
+                var caregiver = await serviceManager.CaregiverService.GetCaregiverAsync(id);
+                return Ok(caregiver);
+            }
+            catch (Exception ex)
+            {
+                return NotFound($"Caregiver with id {id} not found: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CaregiverToReturnDto>> CreateCaregiver(CaregiverToCreateDto request)
+        {
+            try
+            {
+                var caregiver = await serviceManager.CaregiverService.CreateCaregiverAsync(request);
+                return Ok(caregiver);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateCaregiver(CaregiverToReturnDto dto)
+        {
+            try
+            {
+                await serviceManager.CaregiverService.UpdateCaregiverAsync(dto);
+                return NoContent(); // 204
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteCaregiver(int id)
+        {
+            try
+            {
+                await serviceManager.CaregiverService.DeleteCaregiverAsync(id);
+                return NoContent(); // 204
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+    }
+}

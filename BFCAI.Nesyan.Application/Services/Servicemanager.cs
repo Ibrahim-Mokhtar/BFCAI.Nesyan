@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BFCAI.Nesyan.Application.Abstraction.Services;
 using BFCAI.Nesyan.Application.Abstraction.Services.Auth;
 using BFCAI.Nesyan.Application.Abstraction.Services.Doctors;
@@ -12,6 +12,8 @@ using BFCAI.Nesyan.Application.Services.Medications;
 using BFCAI.Nesyan.Application.Services.MindGames;
 using BFCAI.Nesyan.Application.Services.Patients;
 using BFCAI.Nesyan.Application.Services.TreatmentRequests;
+using BFCAI.Nesyan.Application.Services.Relatives;
+using BFCAI.Nesyan.Application.Services.Caregivers;
 using BFCAI.Nesyan.Domain.Contracts;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -33,6 +35,9 @@ namespace BFCAI.Nesyan.Application.Services
         private readonly Lazy<ITreatmentRequestService> _treatmentRequestService;
         private readonly Lazy<IMindGamesService> _mindGamesService;
         private readonly Lazy<IAuthService> _authService;
+        private readonly Lazy<BFCAI.Nesyan.Application.Abstraction.Services.Relatives.IRelativeService> _relativeService;
+        private readonly Lazy<BFCAI.Nesyan.Application.Abstraction.Services.Caregivers.ICaregiverService> _caregiverService;
+
         public Servicemanager(IUnitOfWork unitOfWork,IMapper mapper,IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
@@ -44,6 +49,8 @@ namespace BFCAI.Nesyan.Application.Services
             _treatmentRequestService= new Lazy<ITreatmentRequestService>(()=> new TreatmentRequestService(_unitOfWork, _mapper));
             _authService=new Lazy<IAuthService>(()=>new AuthService(_unitOfWork,_configuration ));
             _mindGamesService = new Lazy<IMindGamesService>(() => new MindGamesService(_unitOfWork,mapper));
+            _relativeService = new Lazy<BFCAI.Nesyan.Application.Abstraction.Services.Relatives.IRelativeService>(() => new RelativeService(_unitOfWork, _mapper));
+            _caregiverService = new Lazy<BFCAI.Nesyan.Application.Abstraction.Services.Caregivers.ICaregiverService>(() => new CaregiverService(_unitOfWork, _mapper));
         }
         public IDoctorService DoctorService => _doctorService.Value;
 
@@ -56,5 +63,8 @@ namespace BFCAI.Nesyan.Application.Services
         public IMindGamesService MindGamesService => _mindGamesService.Value;
 
         public IAuthService AuthService => _authService.Value;
+        
+        public BFCAI.Nesyan.Application.Abstraction.Services.Relatives.IRelativeService RelativeService => _relativeService.Value;
+        public BFCAI.Nesyan.Application.Abstraction.Services.Caregivers.ICaregiverService CaregiverService => _caregiverService.Value;
     }
 }

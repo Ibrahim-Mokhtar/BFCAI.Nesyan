@@ -58,5 +58,68 @@ namespace BFCAI.Nesyan.Application.Services.Patients
 
             return profileDto;
         }
+
+        public async Task<IEnumerable<PatientToReturnDto>> GetPatientsAsync()
+        {
+            var repo = UnitOfWork.GetRepository<Patient, int>();
+            var patients = await repo.GetAllAsync();
+            return Mapper.Map<IEnumerable<PatientToReturnDto>>(patients);
+        }
+
+        public async Task<PatientToReturnDto> GetPatientAsync(int id)
+        {
+            var repo = UnitOfWork.GetRepository<Patient, int>();
+            var patient = await repo.Get(id);
+            if (patient is null) throw new Exception("Patient not found");
+            return Mapper.Map<PatientToReturnDto>(patient);
+        }
+
+        public async Task<PatientToReturnDto> CreatePatientAsync(PatientToCreateDto patientToCreate)
+        {
+            var repo = UnitOfWork.GetRepository<Patient, int>();
+
+            var existingPatients = await repo.GetAllAsync();
+            if (existingPatients.Any(p => p.NationalId == patientToCreate.NationalId))
+                throw new Exception("NationalId is already registered.");
+            if (existingPatients.Any(p => p.Email.Equals(patientToCreate.Email, StringComparison.OrdinalIgnoreCase)))
+                throw new Exception("Email is already registered.");
+            if (existingPatients.Any(p => p.UserName.Equals(patientToCreate.UserName, StringComparison.OrdinalIgnoreCase)))
+                throw new Exception("UserName is already taken.");
+
+            var patient = Mapper.Map<Patient>(patientToCreate);
+            patient.CreatedOn = DateTime.UtcNow;
+            patient.CreatedBy = patient.UserName;
+            patient.LastModifiedOn = DateTime.UtcNow;
+            patient.LastModifiedBy = patient.UserName;
+
+            await repo.AddAsync(patient);
+            await UnitOfWork.CompleteAsync();
+
+            return Mapper.Map<PatientToReturnDto>(patient);
+        }
+
+        public async Task UpdatePatientAsync(PatientToReturnDto patientToUpdate)
+        {
+            var repo = UnitOfWork.GetRepository<Patient, int>();
+            var patient = await repo.Get(patientToUpdate.Id);
+            if (patient is null) throw new Exception("Patient not found");
+
+            Mapper.Map(patientToUpdate, patient);
+            patient.LastModifiedOn = DateTime.UtcNow;
+            patient.LastModifiedBy = patient.UserName ?? "System";
+
+            repo.Update(patient);
+            await UnitOfWork.CompleteAsync();
+        }
+
+        public async Task DeletePatientAsync(int id)
+        {
+            var repo = UnitOfWork.GetRepository<Patient, int>();
+            var patient = await repo.Get(id);
+            if (patient is null) throw new Exception("Patient not found");
+
+            repo.Delete(patient);
+            await UnitOfWork.CompleteAsync();
+        }
     }
 }
