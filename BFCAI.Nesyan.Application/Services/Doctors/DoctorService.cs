@@ -77,11 +77,10 @@ namespace BFCAI.Nesyan.Application.Services.Doctors
 
             // 🧠 Map entity
             var doctor = Mapper.Map<Doctor>(doctorToCreate);
-            doctor.Password = BCrypt.Net.BCrypt.HashPassword(doctor.Password);
-            doctor.CreatedOn = DateTime.UtcNow;
-            doctor.CreatedBy = doctor.UserName; // Or "System"
-            doctor.LastModifiedOn = DateTime.UtcNow;
-            doctor.LastModifiedBy = doctor.UserName;
+            //doctor.CreatedOn = DateTime.UtcNow;
+            //doctor.CreatedBy = doctor.UserName; // Or "System"
+            //doctor.LastModifiedOn = DateTime.UtcNow;
+            //doctor.LastModifiedBy = doctor.UserName;
 
             doctor.GraduationDegree = gradDegreeFileName!;
             doctor.MedicalAssociationCard = medCardFileName!;
