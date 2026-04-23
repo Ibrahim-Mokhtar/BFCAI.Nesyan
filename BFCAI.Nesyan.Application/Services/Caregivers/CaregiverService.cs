@@ -40,6 +40,7 @@ namespace BFCAI.Nesyan.Application.Services.Caregivers
                 throw new Exception("UserName is already taken.");
 
             var caregiver = Mapper.Map<Caregiver>(caregiverToCreate);
+            caregiver.Password = BCrypt.Net.BCrypt.HashPassword(caregiver.Password);
             caregiver.CreatedOn = DateTime.UtcNow;
             caregiver.CreatedBy = caregiver.UserName;
             caregiver.LastModifiedOn = DateTime.UtcNow;

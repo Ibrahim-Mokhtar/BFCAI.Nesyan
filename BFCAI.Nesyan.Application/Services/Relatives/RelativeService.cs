@@ -40,6 +40,7 @@ namespace BFCAI.Nesyan.Application.Services.Relatives
                 throw new Exception("UserName is already taken.");
 
             var relative = Mapper.Map<Relative>(relativeToCreate);
+            relative.Password = BCrypt.Net.BCrypt.HashPassword(relative.Password);
             relative.CreatedOn = DateTime.UtcNow;
             relative.CreatedBy = relative.UserName;
             relative.LastModifiedOn = DateTime.UtcNow;

@@ -87,6 +87,7 @@ namespace BFCAI.Nesyan.Application.Services.Patients
                 throw new Exception("UserName is already taken.");
 
             var patient = Mapper.Map<Patient>(patientToCreate);
+            patient.Password = BCrypt.Net.BCrypt.HashPassword(patient.Password);
             patient.CreatedOn = DateTime.UtcNow;
             patient.CreatedBy = patient.UserName;
             patient.LastModifiedOn = DateTime.UtcNow;
