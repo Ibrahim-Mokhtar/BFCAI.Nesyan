@@ -1,4 +1,4 @@
-﻿using BFCAI.Nesyan.Domain.Contracts;
+using BFCAI.Nesyan.Domain.Contracts;
 
 namespace BFCAI.Nesyan.APIs.Extensions
 {
@@ -14,6 +14,7 @@ namespace BFCAI.Nesyan.APIs.Extensions
             try
             {
                 await storeContextInitializer.InitalizeAsync();
+                await storeContextInitializer.SeedAsync();
 
             }
             catch (Exception ex)

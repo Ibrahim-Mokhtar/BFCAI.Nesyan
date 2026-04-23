@@ -1,0 +1,20 @@
+[
+  {
+    "Name": "Donepezil",
+    "Dosage": "5mg",
+    "Frequency": "Once daily",
+    "ScheduleInstructions": "Take at bedtime",
+    "Notes": "May cause nausea.",
+    "PatientId": 1,
+    "DoctorId": 1
+  },
+  {
+    "Name": "Memantine",
+    "Dosage": "10mg",
+    "Frequency": "Twice daily",
+    "ScheduleInstructions": "Take with meals",
+    "Notes": "Monitor blood pressure.",
+    "PatientId": 1,
+    "DoctorId": 1
+  }
+]
