@@ -25,5 +25,10 @@ namespace BFCAI.Nesyan.Domain.Entities.Primary
         public string Country { get; set; } = null!;
         public string City { get; set; } = null!;
         public int Age { get; set; }
+        public bool IsVerified { get; set; } = false;
+        public string? VerificationCode { get; set; }
+        public DateTime? VerificationCodeExpires { get; set; }
+        public string? PasswordResetCode { get; set; }
+        public DateTime? PasswordResetCodeExpires { get; set; }
     }
 }

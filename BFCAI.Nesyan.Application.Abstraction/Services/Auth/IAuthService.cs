@@ -14,5 +14,8 @@ namespace BFCAI.Nesyan.Application.Abstraction.Services.Auth
         Task<AuthResponseDto> RegisterRelativeAsync(RegisterRelativeDto dto);
         Task<AuthResponseDto> RegisterCaregiverAsync(RegisterCaregiverDto dto);
         Task<AuthResponseDto> LoginAsync(LoginDto dto);
+        Task<AuthResponseDto> VerifyAccountAsync(VerifyAccountDto dto);
+        Task<AuthResponseDto> ForgotPasswordAsync(ForgotPasswordDto dto);
+        Task<AuthResponseDto> ResetPasswordAsync(ResetPasswordDto dto);
     }
 }

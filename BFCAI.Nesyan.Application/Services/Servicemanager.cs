@@ -38,16 +38,19 @@ namespace BFCAI.Nesyan.Application.Services
         private readonly Lazy<BFCAI.Nesyan.Application.Abstraction.Services.Relatives.IRelativeService> _relativeService;
         private readonly Lazy<BFCAI.Nesyan.Application.Abstraction.Services.Caregivers.ICaregiverService> _caregiverService;
 
-        public Servicemanager(IUnitOfWork unitOfWork,IMapper mapper,IConfiguration configuration)
+        private readonly IEmailService _emailService;
+
+        public Servicemanager(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, IEmailService emailService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _configuration = configuration;
+            _emailService = emailService;
             _doctorService = new Lazy<IDoctorService>(() => new DoctorService(_unitOfWork, _mapper));
             _patientService = new Lazy<IPatientService>(() => new PatientService(_unitOfWork, _mapper));
             _medicationService = new Lazy<IMedicationService>(() => new MedicationService(_unitOfWork, _mapper));
             _treatmentRequestService= new Lazy<ITreatmentRequestService>(()=> new TreatmentRequestService(_unitOfWork, _mapper));
-            _authService=new Lazy<IAuthService>(()=>new AuthService(_unitOfWork,_configuration ));
+            _authService=new Lazy<IAuthService>(()=>new AuthService(_unitOfWork, _configuration, _emailService));
             _mindGamesService = new Lazy<IMindGamesService>(() => new MindGamesService(_unitOfWork,mapper));
             _relativeService = new Lazy<BFCAI.Nesyan.Application.Abstraction.Services.Relatives.IRelativeService>(() => new RelativeService(_unitOfWork, _mapper));
             _caregiverService = new Lazy<BFCAI.Nesyan.Application.Abstraction.Services.Caregivers.ICaregiverService>(() => new CaregiverService(_unitOfWork, _mapper));

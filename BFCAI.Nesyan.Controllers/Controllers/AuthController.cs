@@ -4,15 +4,17 @@ using BFCAI.Nesyan.Controllers.Controllers.Base;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
+using BFCAI.Nesyan.Application.Abstraction.Services;
+
 namespace BFCAI.Nesyan.Controllers.Controllers
 {
     public class AuthController : BaseApiController
     {
         private readonly IAuthService _authService;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IServiceManager serviceManager)
         {
-            _authService = authService;
+            _authService = serviceManager.AuthService;
         }
 
         [HttpPost("register-patient")]
@@ -76,6 +78,45 @@ namespace BFCAI.Nesyan.Controllers.Controllers
             var result = await _authService.LoginAsync(dto);
             if (!result.IsSuccess)
                 return StatusCode(401, result);
+
+            return Ok(result);
+        }
+
+        [HttpPost("verify-account")]
+        public async Task<IActionResult> VerifyAccount([FromBody] VerifyAccountDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _authService.VerifyAccountAsync(dto);
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _authService.ForgotPasswordAsync(dto);
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _authService.ResetPasswordAsync(dto);
+            if (!result.IsSuccess)
+                return BadRequest(result);
 
             return Ok(result);
         }

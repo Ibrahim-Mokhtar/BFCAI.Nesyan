@@ -34,6 +34,7 @@ namespace BFCAI.Nesyan.Application
             services.AddScoped(typeof(IServiceManager), typeof(Servicemanager));
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IEmailService, EmailService>();
             return services;
         }
     }
