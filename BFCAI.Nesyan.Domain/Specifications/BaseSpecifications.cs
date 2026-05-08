@@ -15,8 +15,10 @@ namespace BFCAI.Nesyan.Domain.Specifications
     {
         public Expression<Func<TEntity, bool>>? Criteria { get; set; } = null;
         public List<Expression<Func<TEntity, object>>> Includes { get; set; } = new();
+        public List<string> IncludeStrings { get; set; } = new ();
+        public List<Expression<Func<TEntity, object>>> ThenInclude { get ; set ; }=new();
 
-        public BaseSpecifications()
+        public BaseSpecifications() 
         {
             
         }
@@ -31,5 +33,13 @@ namespace BFCAI.Nesyan.Domain.Specifications
         private protected virtual void AddIncludes()
         {
         }
+        protected void AddStringinclude(string include)
+        {
+            IncludeStrings.Add(include);
+        }
+        private protected virtual void AddThenInclude()
+        {
+        }
+
     }
 }

@@ -16,6 +16,7 @@ using BFCAI.Nesyan.Domain.Entities.Alerts;
 using BFCAI.Nesyan.Domain.Entities.MindGames;
 using BFCAI.Nesyan.Domain.Entities.Reports;
 using BFCAI.Nesyan.Domain.Entities.Medications;
+using Microsoft.Data.SqlClient;
 
 namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
 {
@@ -23,27 +24,59 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
     {
         public async Task InitalizeAsync()
         {
-            // If the DB already contains tables but __EFMigrationsHistory is missing/empty,
-            // calling Migrate() will try to re-create tables (and spam errors like "Alerts already exists").
-            // We detect that state and skip migration to keep startup clean.
-
             var db = DbContext.Database;
             var hasHistory = false;
             var hasExistingTables = false;
-            var conn = db.GetDbConnection();
+
+            var originalConnectionString = db.GetConnectionString();
+
+            var builder = new SqlConnectionStringBuilder(originalConnectionString)
+            {
+                InitialCatalog = "master"
+            };
+
+            await using var conn = new SqlConnection(builder.ConnectionString);
+
             await conn.OpenAsync();
+
             try
             {
+                // Check if target database exists
+                using (var dbCmd = conn.CreateCommand())
+                {
+                    dbCmd.CommandText =
+                        "SELECT COUNT(*) FROM sys.databases WHERE name = 'BFCAI.Nesyan.APIs'";
+
+                    var exists = (int)await dbCmd.ExecuteScalarAsync()! > 0;
+
+                    if (!exists)
+                    {
+                        await conn.CloseAsync();
+
+                        await DbContext.Database.MigrateAsync();
+
+                        Console.WriteLine("Database created and migrated successfully.");
+                        return;
+                    }
+                }
+
+                // Switch to target DB
+                conn.ChangeDatabase("BFCAI.Nesyan.APIs");
+
                 bool TableExists(string tableName)
                 {
                     using var cmd = conn.CreateCommand();
+
                     cmd.CommandText = "SELECT OBJECT_ID(@p0);";
+
                     var p = cmd.CreateParameter();
                     p.ParameterName = "@p0";
-                    p.DbType = DbType.String;
                     p.Value = $"[dbo].[{tableName}]";
+
                     cmd.Parameters.Add(p);
+
                     var result = cmd.ExecuteScalar();
+
                     return result != null && result != DBNull.Value;
                 }
 
@@ -53,17 +86,23 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
                         return false;
 
                     using var cmd = conn.CreateCommand();
-                    cmd.CommandText = "SELECT TOP(1) 1 FROM [__EFMigrationsHistory];";
+
+                    cmd.CommandText =
+                        "SELECT TOP(1) 1 FROM [__EFMigrationsHistory];";
+
                     var result = cmd.ExecuteScalar();
+
                     return result != null && result != DBNull.Value;
                 }
 
                 hasHistory = HasMigrationHistoryRows();
-                hasExistingTables = TableExists("Alerts"); // any known table from your schema
+                hasExistingTables = TableExists("Alerts");
 
                 if (!hasHistory && hasExistingTables)
                 {
-                    Console.WriteLine("Database migration skipped: existing schema detected but migrations history is missing/out-of-sync.");
+                    Console.WriteLine(
+                        "Database migration skipped: schema exists but migrations history is missing.");
+
                     return;
                 }
             }
@@ -72,22 +111,17 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
                 await conn.CloseAsync();
             }
 
-            var pendingMigrations = await DbContext.Database.GetPendingMigrationsAsync();
+            var pendingMigrations =
+                await DbContext.Database.GetPendingMigrationsAsync();
+
             if (!pendingMigrations.Any())
             {
                 Console.WriteLine("No pending migrations.");
                 return;
             }
 
-            // If the DB already has tables, but InitialCreate is still pending, EF will try to create existing objects.
-            // This indicates migrations history is out-of-sync with the actual schema. Skip to keep startup clean.
-            if (hasExistingTables && pendingMigrations.Contains("20260416134014_InitialCreate"))
-            {
-                Console.WriteLine("Database migration skipped: InitialCreate is pending but the schema already exists (migrations history out-of-sync).");
-                return;
-            }
-
             await DbContext.Database.MigrateAsync();
+
             Console.WriteLine("Database migrated successfully.");
         }
 
@@ -95,7 +129,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
         {
             try
             {
-                if (!DbContext.Doctors.Any())
+                if (!await DbContext.Doctors.AnyAsync())
                 {
                     var doctorsData = await File.ReadAllTextAsync("../BFCAI.Nesyan.Infrastructure.Presistence/_Data/Seeds/doctors.json");
                     var doctors = JsonSerializer.Deserialize<List<Doctor>>(doctorsData);
@@ -107,7 +141,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
                     }
                 }
 
-                if (!DbContext.Patients.Any())
+                if (!await DbContext.Patients.AnyAsync())
                 {
                     var patientsData = await File.ReadAllTextAsync("../BFCAI.Nesyan.Infrastructure.Presistence/_Data/Seeds/patients.json");
                     var patients = JsonSerializer.Deserialize<List<Patient>>(patientsData);
@@ -119,7 +153,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
                     }
                 }
 
-                if (!DbContext.Relatives.Any())
+                if (!await DbContext.Relatives.AnyAsync())
                 {
                     var relativesData = await File.ReadAllTextAsync("../BFCAI.Nesyan.Infrastructure.Presistence/_Data/Seeds/relatives.json");
                     var relatives = JsonSerializer.Deserialize<List<Relative>>(relativesData);
@@ -131,7 +165,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
                     }
                 }
 
-                if (!DbContext.Caregivers.Any())
+                if (!await DbContext.Caregivers.AnyAsync())
                 {
                     var caregiversData = await File.ReadAllTextAsync("../BFCAI.Nesyan.Infrastructure.Presistence/_Data/Seeds/caregivers.json");
                     var caregivers = JsonSerializer.Deserialize<List<Caregiver>>(caregiversData);
@@ -143,7 +177,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
                     }
                 }
 
-                if (!DbContext.Alerts.Any())
+                if (!await DbContext.Alerts.AnyAsync())
                 {
                     var alertsData = await File.ReadAllTextAsync("../BFCAI.Nesyan.Infrastructure.Presistence/_Data/Seeds/alerts.json");
                     var alerts = JsonSerializer.Deserialize<List<Alert>>(alertsData);
@@ -155,7 +189,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
                     }
                 }
 
-                if (!DbContext.MindGames.Any())
+                if (!await DbContext.MindGames.AnyAsync())
                 {
                     var mindgamesData = await File.ReadAllTextAsync("../BFCAI.Nesyan.Infrastructure.Presistence/_Data/Seeds/mindgames.json");
                     var mindgames = JsonSerializer.Deserialize<List<MindGame>>(mindgamesData);
@@ -167,7 +201,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
                     }
                 }
 
-                if (!DbContext.Medications.Any())
+                if (!await DbContext.Medications.AnyAsync())
                 {
                     var medicationsData = await File.ReadAllTextAsync("../BFCAI.Nesyan.Infrastructure.Presistence/_Data/Seeds/medications.json");
                     var medications = JsonSerializer.Deserialize<List<Medication>>(medicationsData);
@@ -179,7 +213,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
                     }
                 }
 
-                if (!DbContext.Reports.Any())
+                if (!await DbContext.Reports.AnyAsync())
                 {
                     var reportsData = await File.ReadAllTextAsync("../BFCAI.Nesyan.Infrastructure.Presistence/_Data/Seeds/reports.json");
                     var reports = JsonSerializer.Deserialize<List<Report>>(reportsData);

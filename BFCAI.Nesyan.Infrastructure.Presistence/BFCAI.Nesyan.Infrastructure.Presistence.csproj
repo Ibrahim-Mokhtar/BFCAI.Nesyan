@@ -16,4 +16,8 @@
     <ProjectReference Include="..\BFCAI.Nesyan.Domain\BFCAI.Nesyan.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Migrations\" />
+  </ItemGroup>
+
 </Project>

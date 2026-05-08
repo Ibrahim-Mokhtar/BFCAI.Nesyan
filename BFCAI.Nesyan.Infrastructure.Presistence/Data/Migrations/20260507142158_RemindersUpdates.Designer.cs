@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20260416161347_AddCaregiverTable")]
-    partial class AddCaregiverTable
+    [Migration("20260507142158_RemindersUpdates")]
+    partial class RemindersUpdates
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -72,6 +72,58 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                     b.ToTable("Alerts");
                 });
 
+            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.IoT.PatientTelemetry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Hr")
+                        .HasColumnType("float");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Lat")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Lng")
+                        .HasColumnType("float");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Spo2")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Steps")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("PatientTelemetries");
+                });
+
             modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Medications.Medication", b =>
                 {
                     b.Property<int>("Id")
@@ -87,18 +139,8 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DoctorId")
+                    b.Property<int>("Frequency")
                         .HasColumnType("int");
-
-                    b.Property<string>("Dosage")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Frequency")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("LastModifiedBy")
                         .IsRequired()
@@ -108,29 +150,35 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ScheduleInstructions")
+                    b.Property<DateOnly>("ReminderDate")
+                        .HasColumnType("date");
+
+                    b.Property<TimeOnly>("ReminderTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DoctorId");
-
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Medications");
+                    b.ToTable("Reminders", (string)null);
                 });
 
             modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.MindGames.MindGame", b =>
@@ -162,7 +210,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                     b.ToTable("MindGames");
                 });
 
-            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.Caregiver.Caregiver", b =>
+            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.Caregivers.Caregiver", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -198,6 +246,9 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -216,16 +267,28 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PasswordResetCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PasswordResetCodeExpires")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VerificationCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("VerificationCodeExpires")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.ToTable("Caregivers");
                 });
 
-            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.Doctor.Doctor", b =>
+            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.Doctors.Doctor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -273,6 +336,9 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -300,10 +366,22 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<string>("PasswordResetCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PasswordResetCodeExpires")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("VerificationCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("VerificationCodeExpires")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -319,7 +397,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                     b.ToTable("Doctors");
                 });
 
-            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.Patient.Patient", b =>
+            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.Patients.Patient", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -361,6 +439,9 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("DoctorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -378,6 +459,9 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
 
                     b.Property<decimal>("Height")
                         .HasColumnType("decimal(5,2)");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LName")
                         .IsRequired()
@@ -401,15 +485,29 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<string>("PasswordResetCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PasswordResetCodeExpires")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("VerificationCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("VerificationCodeExpires")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal>("Weight")
                         .HasColumnType("decimal(5,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -423,7 +521,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                     b.ToTable("Patients");
                 });
 
-            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.Relative.Relative", b =>
+            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.Relatives.Relative", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -466,6 +564,9 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                         .HasMaxLength(6)
                         .HasColumnType("nvarchar(6)");
 
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -488,10 +589,22 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<string>("PasswordResetCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PasswordResetCodeExpires")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("VerificationCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("VerificationCodeExpires")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -589,29 +702,6 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                     b.HasIndex("PatientId", "MindGameId");
 
                     b.ToTable("MindGameSessions");
-                });
-
-            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Relations.Primary.PatientDoctor", b =>
-                {
-                    b.Property<int>("PatientId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("EnrollmentDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("PatientId", "DoctorId");
-
-                    b.HasIndex("DoctorId");
-
-                    b.ToTable("PatientDoctors");
                 });
 
             modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Relations.Primary.PatientRelative", b =>
@@ -729,23 +819,36 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                     b.ToTable("Reports");
                 });
 
-            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Medications.Medication", b =>
+            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.IoT.PatientTelemetry", b =>
                 {
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Doctor.Doctor", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patient.Patient", "Patient")
+                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patients.Patient", "Patient")
                         .WithMany()
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Doctor");
+                    b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Medications.Medication", b =>
+                {
+                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patients.Patient", "Patient")
+                        .WithMany("Medications")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.Patients.Patient", b =>
+                {
+                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Doctors.Doctor", "Doctor")
+                        .WithMany("Patients")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Doctor");
                 });
 
             modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Relations.Alerts.PatientRelativeAlert", b =>
@@ -756,13 +859,13 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patient.Patient", "Patient")
+                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patients.Patient", "Patient")
                         .WithMany()
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Relative.Relative", "Relative")
+                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Relatives.Relative", "Relative")
                         .WithMany()
                         .HasForeignKey("RelativeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -777,7 +880,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
 
             modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Relations.MindGames.MindGameSession", b =>
                 {
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Doctor.Doctor", "Doctor")
+                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Doctors.Doctor", "Doctor")
                         .WithMany()
                         .HasForeignKey("DoctorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -789,7 +892,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patient.Patient", "Patient")
+                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patients.Patient", "Patient")
                         .WithMany()
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -802,34 +905,15 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Relations.Primary.PatientDoctor", b =>
-                {
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Doctor.Doctor", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patient.Patient", "Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
-
-                    b.Navigation("Patient");
-                });
-
             modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Relations.Primary.PatientRelative", b =>
                 {
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patient.Patient", "Patient")
+                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patients.Patient", "Patient")
                         .WithMany()
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Relative.Relative", "Relative")
+                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Relatives.Relative", "Relative")
                         .WithMany()
                         .HasForeignKey("RelativeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -842,19 +926,19 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
 
             modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Relations.Primary.RelativeDoctorRequest", b =>
                 {
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Doctor.Doctor", "Doctor")
+                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Doctors.Doctor", "Doctor")
                         .WithMany()
                         .HasForeignKey("DoctorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patient.Patient", "Patient")
+                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patients.Patient", "Patient")
                         .WithMany()
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Relative.Relative", "Relative")
+                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Relatives.Relative", "Relative")
                         .WithMany()
                         .HasForeignKey("RelativeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -869,13 +953,23 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
 
             modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Reports.Report", b =>
                 {
-                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patient.Patient", "Patient")
+                    b.HasOne("BFCAI.Nesyan.Domain.Entities.Primary.Patients.Patient", "Patient")
                         .WithMany()
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.Doctors.Doctor", b =>
+                {
+                    b.Navigation("Patients");
+                });
+
+            modelBuilder.Entity("BFCAI.Nesyan.Domain.Entities.Primary.Patients.Patient", b =>
+                {
+                    b.Navigation("Medications");
                 });
 #pragma warning restore 612, 618
         }

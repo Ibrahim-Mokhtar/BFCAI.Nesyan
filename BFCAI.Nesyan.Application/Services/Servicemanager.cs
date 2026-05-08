@@ -1,21 +1,23 @@
 using AutoMapper;
 using BFCAI.Nesyan.Application.Abstraction.Services;
+using BFCAI.Nesyan.Application.Abstraction.Services._Relations;
 using BFCAI.Nesyan.Application.Abstraction.Services.Auth;
 using BFCAI.Nesyan.Application.Abstraction.Services.Doctors;
+using BFCAI.Nesyan.Application.Abstraction.Services.IoT;
 using BFCAI.Nesyan.Application.Abstraction.Services.Medications;
 using BFCAI.Nesyan.Application.Abstraction.Services.MindGames;
 using BFCAI.Nesyan.Application.Abstraction.Services.Patients;
 using BFCAI.Nesyan.Application.Abstraction.Services.TreatmentRequests;
+using BFCAI.Nesyan.Application.Services._Reltaions.RelativePatient;
 using BFCAI.Nesyan.Application.Services.Auth;
+using BFCAI.Nesyan.Application.Services.Caregivers;
 using BFCAI.Nesyan.Application.Services.Doctors;
+using BFCAI.Nesyan.Application.Services.IoT;
 using BFCAI.Nesyan.Application.Services.Medications;
 using BFCAI.Nesyan.Application.Services.MindGames;
 using BFCAI.Nesyan.Application.Services.Patients;
-using BFCAI.Nesyan.Application.Services.TreatmentRequests;
 using BFCAI.Nesyan.Application.Services.Relatives;
-using BFCAI.Nesyan.Application.Services.Caregivers;
-using BFCAI.Nesyan.Application.Abstraction.Services.IoT;
-using BFCAI.Nesyan.Application.Services.IoT;
+using BFCAI.Nesyan.Application.Services.TreatmentRequests;
 using BFCAI.Nesyan.Domain.Contracts;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -40,6 +42,7 @@ namespace BFCAI.Nesyan.Application.Services
         private readonly Lazy<BFCAI.Nesyan.Application.Abstraction.Services.Relatives.IRelativeService> _relativeService;
         private readonly Lazy<BFCAI.Nesyan.Application.Abstraction.Services.Caregivers.ICaregiverService> _caregiverService;
         private readonly Lazy<ITelemetryService> _telemetryService;
+        private readonly Lazy<IRelativePatientService> _relativePatientService;
 
         private readonly IEmailService _emailService;
 
@@ -58,6 +61,7 @@ namespace BFCAI.Nesyan.Application.Services
             _relativeService = new Lazy<BFCAI.Nesyan.Application.Abstraction.Services.Relatives.IRelativeService>(() => new RelativeService(_unitOfWork, _mapper));
             _caregiverService = new Lazy<BFCAI.Nesyan.Application.Abstraction.Services.Caregivers.ICaregiverService>(() => new CaregiverService(_unitOfWork, _mapper));
             _telemetryService = new Lazy<ITelemetryService>(() => new TelemetryService(telemetryStore, _unitOfWork));
+            _relativePatientService = new Lazy<IRelativePatientService>(() => new RelativePatientService(_unitOfWork, _mapper));
         }
         public IDoctorService DoctorService => _doctorService.Value;
 
@@ -74,5 +78,7 @@ namespace BFCAI.Nesyan.Application.Services
         public BFCAI.Nesyan.Application.Abstraction.Services.Relatives.IRelativeService RelativeService => _relativeService.Value;
         public BFCAI.Nesyan.Application.Abstraction.Services.Caregivers.ICaregiverService CaregiverService => _caregiverService.Value;
         public ITelemetryService TelemetryService => _telemetryService.Value;
+
+        public IRelativePatientService RelativePatientService => _relativePatientService.Value;
     }
 }

@@ -22,7 +22,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Repository
             }
             query = spec.Includes.Aggregate(query, (currentQuery, includeExpression) => currentQuery.Include(includeExpression));
 
-
+            query = spec.IncludeStrings.Aggregate(query,(current, include)=> current.Include(include));
 
 
             return query;

@@ -1,4 +1,6 @@
 ﻿
+using BFCAI.Nesyan.Domain.Entities.Assessments;
+using BFCAI.Nesyan.Domain.Entities.Medications;
 using BFCAI.Nesyan.Domain.Entities.Primary.Doctors;
 using BFCAI.Nesyan.Domain.Entities.Relations;
 using System;
@@ -37,6 +39,7 @@ namespace BFCAI.Nesyan.Domain.Entities.Primary.Patients
         public int? DoctorId { get; set; }
         public Doctor? Doctor { get; set; }
 
-
+        public ICollection<Medication> Medications { get; set; }= new List<Medication>();
+        public ICollection<Assessment> Assessments { get; set; }= new List<Assessment>();
     }
 }

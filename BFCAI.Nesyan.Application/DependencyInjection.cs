@@ -30,6 +30,7 @@ namespace BFCAI.Nesyan.Application
             services.AddAutoMapper(O =>
             {
                 O.AddProfile<MappingProfile>();
+                O.AddProfile<PatientRelativeMappingProfile>();
             });
             services.AddScoped(typeof(IServiceManager), typeof(Servicemanager));
             services.AddHttpContextAccessor();

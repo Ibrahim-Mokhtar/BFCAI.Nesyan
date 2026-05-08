@@ -10,38 +10,41 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Config.Medications
         public override void Configure(EntityTypeBuilder<Medication> builder)
         {
             base.Configure(builder);
+            builder.ToTable("Reminders");
+
+
+            builder.Property(x => x.Title)
+                .IsRequired()
+                .HasMaxLength(200);
 
             builder.Property(x => x.Name)
-                .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(200);
 
-            builder.Property(x => x.Dosage)
+            builder.Property(x => x.Notes)
+                .HasMaxLength(1000);
+
+            // Enum Handling
+            builder.Property(x => x.Type)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasConversion<int>();
 
             builder.Property(x => x.Frequency)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasConversion<int>();
 
-            builder.Property(x => x.ScheduleInstructions)
-                .IsRequired()
-                .HasMaxLength(250);
+            builder.Property(x => x.ReminderDate)
+                .IsRequired();
 
-            builder.Property(x => x.Notes)
-                .HasMaxLength(500);
+            builder.Property(x => x.ReminderTime)
+                .IsRequired();
 
+            // Relationship With Patient
             builder.HasOne(x => x.Patient)
-                .WithMany()
+                .WithMany(x => x.Medications)
                 .HasForeignKey(x => x.PatientId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(x => x.Doctor)
-                .WithMany()
-                .HasForeignKey(x => x.DoctorId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasIndex(x => x.PatientId);
-            builder.HasIndex(x => x.DoctorId);
         }
     }
 }
+

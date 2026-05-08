@@ -1,27 +1,26 @@
 using AutoMapper;
-using BFCAI.Nesyan.Application.Abstraction.Models.Doctors;
-using BFCAI.Nesyan.Domain.Entities.Primary;
-using BFCAI.Nesyan.Domain.Entities.Primary.Doctors;
-using BFCAI.Nesyan.Application.Abstraction.Models.TreatmentRequests;
-using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
-using BFCAI.Nesyan.Domain.Entities.Primary.Patients;
-using BFCAI.Nesyan.Application.Abstraction.Models.Medications;
-
-using BFCAI.Nesyan.Application.Abstraction.Models.MindGames;
-using BFCAI.Nesyan.Application.Abstraction.Models.Relatives;
+using BFCAI.Nesyan.Application.Abstraction.Models._Relations.RelativePatient;
 using BFCAI.Nesyan.Application.Abstraction.Models.Caregivers;
-
+using BFCAI.Nesyan.Application.Abstraction.Models.Doctors;
+using BFCAI.Nesyan.Application.Abstraction.Models.Medications;
+using BFCAI.Nesyan.Application.Abstraction.Models.MindGames;
+using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
+using BFCAI.Nesyan.Application.Abstraction.Models.Relatives;
+using BFCAI.Nesyan.Application.Abstraction.Models.TreatmentRequests;
+using BFCAI.Nesyan.Domain.Entities.Medications;
+using BFCAI.Nesyan.Domain.Entities.MindGames;
+using BFCAI.Nesyan.Domain.Entities.Primary;
+using BFCAI.Nesyan.Domain.Entities.Primary.Caregivers;
+using BFCAI.Nesyan.Domain.Entities.Primary.Doctors;
+using BFCAI.Nesyan.Domain.Entities.Primary.Patients;
+using BFCAI.Nesyan.Domain.Entities.Primary.Relatives;
+using BFCAI.Nesyan.Domain.Entities.Relations.MindGames;
+using BFCAI.Nesyan.Domain.Entities.Relations.Primary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BFCAI.Nesyan.Domain.Entities.Relations.Primary;
-using BFCAI.Nesyan.Domain.Entities.MindGames;
-using BFCAI.Nesyan.Domain.Entities.Medications;
-using BFCAI.Nesyan.Domain.Entities.Relations.MindGames;
-using BFCAI.Nesyan.Domain.Entities.Primary.Relatives;
-using BFCAI.Nesyan.Domain.Entities.Primary.Caregivers;
 
 namespace BFCAI.Nesyan.Application.Mapping
 {
@@ -49,7 +48,7 @@ namespace BFCAI.Nesyan.Application.Mapping
                 .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => Enum.Parse<Gender>(src.Gender, true)))
                 .ForMember(dest => dest.BloodType, opt => opt.MapFrom(src => Enum.Parse<BloodType>(src.BloodType, true)))
                 .ForMember(dest => dest.CurrentStage, opt => opt.MapFrom(src => (AlzheimerStage)src.CurrentStage));
-                
+
             CreateMap<PatientToReturnDto, Patient>()
                 .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => Enum.Parse<Gender>(src.Gender, true)))
                 .ForMember(dest => dest.BloodType, opt => opt.MapFrom(src => Enum.Parse<BloodType>(src.BloodType, true)))
@@ -85,6 +84,7 @@ namespace BFCAI.Nesyan.Application.Mapping
                     .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender.ToString()));
             CreateMap<CaregiverToReturnDto, Caregiver>()
                     .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => Enum.Parse<Gender>(src.Gender, true)));
+
         }
     }
 }

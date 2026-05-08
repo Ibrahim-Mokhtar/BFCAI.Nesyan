@@ -13,6 +13,9 @@ namespace BFCAI.Nesyan.Domain.Contracts
         where TKey : IEquatable<TKey>
     {
         public Expression<Func<TEntity, bool>>? Criteria { get; set; }
+
         public List<Expression<Func<TEntity, object>>> Includes { get; set; }
+        public List<Expression<Func<TEntity, object>>> ThenInclude { get; set; }
+        public List<string> IncludeStrings { get; set; }
     }
 }

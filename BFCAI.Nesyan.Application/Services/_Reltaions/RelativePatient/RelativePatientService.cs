@@ -1,0 +1,52 @@
+﻿using AutoMapper;
+using BFCAI.Nesyan.Application.Abstraction.Models._Relations.RelativePatient;
+using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
+using BFCAI.Nesyan.Application.Abstraction.Models.Relatives;
+using BFCAI.Nesyan.Application.Abstraction.Services._Relations;
+using BFCAI.Nesyan.Domain.Contracts;
+using BFCAI.Nesyan.Domain.Entities.Primary.Relatives;
+using BFCAI.Nesyan.Domain.Entities.Relations.Primary;
+using BFCAI.Nesyan.Domain.Specifications.PatientRelatives;
+using BFCAI.Nesyan.Domain.Specifications.Relatives;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BFCAI.Nesyan.Application.Services._Reltaions.RelativePatient
+{
+    public class RelativePatientService(IUnitOfWork unitOfWork, IMapper mapper) : IRelativePatientService
+    {
+        public async Task<RelativePatientsDto> GetRelativePatients(int relativeId)
+        {
+            var spec =new GetRelativePatientsSpecification(relativeId);
+            var relative = await unitOfWork.GetRepository<Relative, int>().GetWithSpecAsync(spec);
+            var relativePatientsDto= new RelativePatientsDto
+            {
+                RelativeSummary =
+                    mapper.Map<RelativeSummaryDto>(relative),
+
+                Patients =
+                    mapper.Map<IEnumerable<PatientSummaryDto>>(
+                    relative?.Patients)
+            };
+            return relativePatientsDto;
+        }
+        public async Task<RelativePatientsDto> GetPatientHomeAsync(int relativeId, int patientId)
+        {
+            var sepcs=new PatientRelativeHomeSpecifications(relativeId,patientId);
+            var relativePatient = await unitOfWork.GetRepository<PatientRelative, int>().GetWithSpecAsync(sepcs);
+            var relativePatientsDto = new RelativePatientsDto
+            {
+                RelativeSummary =
+                  mapper.Map<RelativeSummaryDto>(relativePatient?.Relative),
+
+                Patients = new List<PatientSummaryDto> {
+                  mapper.Map<PatientSummaryDto>(relativePatient?.Patient)
+            }
+            };
+            return relativePatientsDto;
+        }
+    }
+}

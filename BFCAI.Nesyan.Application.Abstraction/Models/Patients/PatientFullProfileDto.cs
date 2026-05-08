@@ -1,3 +1,4 @@
+using BFCAI.Nesyan.Application.Abstraction.Models.Assessments;
 using BFCAI.Nesyan.Application.Abstraction.Models.Medications;
 using BFCAI.Nesyan.Application.Abstraction.Models.MindGames;
 using System.Collections.Generic;
@@ -25,5 +26,6 @@ namespace BFCAI.Nesyan.Application.Abstraction.Models.Patients
 
         public IEnumerable<MedicationToReturnDto> Medications { get; set; } = new List<MedicationToReturnDto>();
         public IEnumerable<PatientMindGameDto> AssignedGames { get; set; } = new List<PatientMindGameDto>();
+        public IEnumerable<AssessmentsToReturnDto> Assessments { get; set; } = new List<AssessmentsToReturnDto>();
     }
 }

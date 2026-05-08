@@ -1,0 +1,45 @@
+﻿using BFCAI.Nesyan.Application.Abstraction.Models._Relations.RelativePatient;
+using BFCAI.Nesyan.Application.Abstraction.Services;
+using BFCAI.Nesyan.Application.Abstraction.Services._Relations;
+using BFCAI.Nesyan.Controllers.Controllers.Base;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web.Mvc;
+
+namespace BFCAI.Nesyan.Controllers.Controllers._Relations.RelativePatientController
+{
+    [Microsoft.AspNetCore.Components.Route("api/relative")]
+    public class RelativePatientsController(IServiceManager serviceManager):BaseApiController
+    {
+        [Microsoft.AspNetCore.Mvc.HttpGet("{relativeId}/patients")]
+        public async Task<ActionResult<RelativePatientsDto>>
+        GetRelativePatients(int relativeId)
+        {
+            var result =
+                await serviceManager.RelativePatientService
+                    .GetRelativePatients(relativeId);
+
+            if (result is null)
+                return NotFound();
+
+            return Ok(result);
+        }
+
+        [Microsoft.AspNetCore.Mvc.HttpGet("{relativeId}/patients/{patientId}/home")]
+        public async Task<ActionResult<RelativePatientsDto>> GetPatientHome(int relativeId,int patientId)
+        {
+            var result =
+                await serviceManager.RelativePatientService.GetPatientHomeAsync(relativeId,patientId);
+
+            if (result is null)
+                return NotFound();
+
+            return Ok(result);
+        }
+
+    }
+}

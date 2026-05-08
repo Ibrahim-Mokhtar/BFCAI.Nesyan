@@ -38,10 +38,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Repository.GenericRepositories
 
         #region Helpers
         private IQueryable<TEntity> ApplySpecification(ISpecification<TEntity, TKey> spec)
-            => SpecificationEvaluator<TEntity, TKey>.GetQuery(DbContext.Set<TEntity>().AsQueryable(), spec);
-
-
-        
+            => SpecificationEvaluator<TEntity, TKey>.GetQuery(DbContext.Set<TEntity>().AsQueryable(), spec);        
         #endregion
     }
 }

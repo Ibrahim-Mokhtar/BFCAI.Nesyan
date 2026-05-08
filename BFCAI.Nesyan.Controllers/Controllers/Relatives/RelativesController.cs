@@ -10,12 +10,12 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Relatives
 {
     public class RelativesController(IServiceManager serviceManager) : BaseApiController
     {
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<RelativeToReturnDto>>> GetRelatives()
-        {
-            var relatives = await serviceManager.RelativeService.GetRelativesAsync();
-            return Ok(relatives);
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<RelativeToReturnDto>>> GetRelatives()
+        //{
+        //    var relatives = await serviceManager.RelativeService.GetRelativesAsync();
+        //    return Ok(relatives);
+        //}
 
         [HttpGet("{id}")]
         public async Task<ActionResult<RelativeToReturnDto>> GetRelative(int id)
@@ -72,5 +72,6 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Relatives
                 return NotFound(ex.Message);
             }
         }
+
     }
 }

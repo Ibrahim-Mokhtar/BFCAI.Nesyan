@@ -1,4 +1,5 @@
 ﻿using BFCAI.Nesyan.Domain.Entities.Relations.Primary;
+using BFCAI.Nesyan.Infrastructure.Presistence.Data.Config.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -10,10 +11,13 @@ using System.Threading.Tasks;
 
 namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Config.Relations.Primary
 {
-    internal class PatientRelativeConfigurations : IEntityTypeConfiguration<PatientRelative>
+    internal class PatientRelativeConfigurations : BaseEntityConfigurations<PatientRelative,int>
     {
-        public void Configure(EntityTypeBuilder<PatientRelative> builder)
+        
+        public override void Configure(EntityTypeBuilder<PatientRelative> builder)
         {
+            base.Configure(builder);
+            builder.Ignore(pr => pr.Id);
             builder.HasKey(pr => new { pr.PatientId, pr.RelativeId });
 
             builder.HasOne(pr => pr.Patient)
@@ -21,8 +25,8 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Config.Relations.Primary
                 .HasForeignKey(pr => pr.PatientId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(pr=>pr.Relative)
-                .WithMany()
+            builder.HasOne(pr => pr.Relative)
+                .WithMany(r=>r.Patients)
                 .HasForeignKey(pr => pr.RelativeId)
                 .OnDelete(DeleteBehavior.Cascade);
 
