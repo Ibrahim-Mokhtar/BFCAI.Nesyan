@@ -30,6 +30,14 @@ namespace BFCAI.Nesyan.Domain.Entities.Medications
         public string Title { get; set; } = null!;
 
         public string? Name { get; set; }
+        // Medication only
+        public string? Dosage { get; set; }
+
+        // Appointment only
+        public string? Location { get; set; }
+
+        // Appointment only
+        public string? Specialty { get; set; }
 
         public ReminderFrequency Frequency { get; set; }
 

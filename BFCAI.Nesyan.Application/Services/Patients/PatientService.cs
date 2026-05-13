@@ -1,5 +1,4 @@
 using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
-using BFCAI.Nesyan.Application.Abstraction.Models.Medications;
 using BFCAI.Nesyan.Application.Abstraction.Models.MindGames;
 
 using BFCAI.Nesyan.Application.Abstraction.Services.Patients;

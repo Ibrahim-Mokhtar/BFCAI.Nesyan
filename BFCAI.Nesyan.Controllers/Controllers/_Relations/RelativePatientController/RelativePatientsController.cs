@@ -40,6 +40,13 @@ namespace BFCAI.Nesyan.Controllers.Controllers._Relations.RelativePatientControl
 
             return Ok(result);
         }
+        [Microsoft.AspNetCore.Mvc.HttpGet("{relativeId}/patients/{patientId}/reminders")]
+        public async Task<IActionResult> GetPatientReminders(int relativeId,int patientId,[FromQuery]int reminderType)
+        {
+            var result = 
+                await serviceManager.RelativePatientService.GetPatientReminders(relativeId,patientId,reminderType);
 
+            return Ok(result);
+        }
     }
 }

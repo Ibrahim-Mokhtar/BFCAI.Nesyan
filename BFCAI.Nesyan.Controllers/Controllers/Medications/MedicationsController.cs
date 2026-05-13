@@ -1,4 +1,6 @@
-using BFCAI.Nesyan.Application.Abstraction.Models.Medications;
+
+using BFCAI.Nesyan.Application.Abstraction.Models.Reminders;
+using BFCAI.Nesyan.Application.Abstraction.Models.Routines;
 using BFCAI.Nesyan.Application.Abstraction.Services.Medications;
 using BFCAI.Nesyan.Controllers.Controllers.Base;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +13,7 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Medications
     public class MedicationsController(IMedicationService MedicationService) : BaseApiController
     {
         [HttpGet("patient/{patientId}")]
-        public async Task<ActionResult<IEnumerable<MedicationToReturnDto>>> GetPatientMedications(int patientId)
+        public async Task<ActionResult<IEnumerable<RoutineToReturnDto>>> GetPatientMedications(int patientId)
         {
             try
             {
@@ -25,12 +27,12 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Medications
         }
 
         [HttpPost]
-        public async Task<ActionResult<MedicationToReturnDto>> AddMedication([FromBody] MedicationToCreateDto dto)
+        public async Task<ActionResult<RoutineToReturnDto>> AddMedication([FromBody] ReminderToCreateDto dto)
         {
             try
             {
                 var med = await MedicationService.AddMedicationAsync(dto);
-                return CreatedAtAction(nameof(GetPatientMedications), new { patientId = med.PatientId }, med);
+                return CreatedAtAction(nameof(GetPatientMedications), new { patientId = med.Id }, med);
             }
             catch (Exception ex)
             {

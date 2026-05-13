@@ -40,7 +40,7 @@ namespace BFCAI.Nesyan.Domain.Entities.Primary.Patients
         public int? DoctorId { get; set; }
         public Doctor? Doctor { get; set; }
 
-        public ICollection<Medication> Medications { get; set; }= new List<Medication>();
+        public ICollection<Medication> Reminders { get; set; }= new List<Medication>();
         public ICollection<Assessment> Assessments { get; set; }= new List<Assessment>();
         public ICollection<PatientTelemetry> PatientTelemetries { get; set; } = new List<PatientTelemetry>();
     }

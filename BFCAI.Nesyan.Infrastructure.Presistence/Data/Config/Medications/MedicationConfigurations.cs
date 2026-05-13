@@ -40,7 +40,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Config.Medications
 
             // Relationship With Patient
             builder.HasOne(x => x.Patient)
-                .WithMany(x => x.Medications)
+                .WithMany(x => x.Reminders)
                 .HasForeignKey(x => x.PatientId)
                 .OnDelete(DeleteBehavior.Cascade);
 

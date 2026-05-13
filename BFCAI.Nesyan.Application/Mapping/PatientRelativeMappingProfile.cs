@@ -1,10 +1,14 @@
 ﻿using AutoMapper;
+using BFCAI.Nesyan.Application.Abstraction.Models.Appointments;
 using BFCAI.Nesyan.Application.Abstraction.Models.Assessments;
 using BFCAI.Nesyan.Application.Abstraction.Models.IoT;
 using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
 using BFCAI.Nesyan.Application.Abstraction.Models.Relatives;
+using BFCAI.Nesyan.Application.Abstraction.Models.Reminders.Medications;
+using BFCAI.Nesyan.Application.Abstraction.Models.Routines;
 using BFCAI.Nesyan.Domain.Entities.Assessments;
 using BFCAI.Nesyan.Domain.Entities.IoT;
+using BFCAI.Nesyan.Domain.Entities.Medications;
 using BFCAI.Nesyan.Domain.Entities.Primary.Patients;
 using BFCAI.Nesyan.Domain.Entities.Primary.Relatives;
 using BFCAI.Nesyan.Domain.Entities.Relations.Primary;
@@ -202,6 +206,103 @@ namespace BFCAI.Nesyan.Application.Mapping
                             .OrderByDescending(a =>
                                 a.CreatedOn)
                             .FirstOrDefault()));
+                // ================================
+                // Reminder -> Medication DTO
+                // ================================
+
+                CreateMap<Medication,
+                    MedicationToReturnDto>()
+
+                    .ForMember(
+                        dest => dest.Frequency,
+                        opt => opt.MapFrom(src =>
+                            src.Frequency.ToString()));
+
+
+                // ================================
+                // Reminder -> Appointment DTO
+                // ================================
+
+                CreateMap<Medication,
+                    AppointmentToReturnDto>()
+
+                    .ForMember(
+                        dest => dest.Frequency,
+                        opt => opt.MapFrom(src =>
+                            src.Frequency.ToString()));
+
+
+                // ================================
+                // Reminder -> Routine DTO
+                // ================================
+
+                CreateMap<Medication,
+                    RoutineToReturnDto>()
+
+                    .ForMember(
+                        dest => dest.Frequency,
+                        opt => opt.MapFrom(src =>
+                            src.Frequency.ToString()));
+
+
+                // ================================
+                // Patient -> PatientMedicationsDto
+                // ================================
+
+                CreateMap<Patient,
+                    PatientMedicationsDto>()
+
+                    .ForMember(
+                        dest => dest.PatientSummary,
+                        opt => opt.MapFrom(src => src))
+
+                    .ForMember(
+                        dest => dest.PatientMedications,
+                        opt => opt.MapFrom(src =>
+                            src.Reminders
+                                .Where(m =>
+                                    m.Type ==
+                                    ReminderType.Medication)));
+
+
+                // ================================
+                // Patient -> PatientAppointmentsDto
+                // ================================
+
+                CreateMap<Patient,
+                    PatientAppointmentsDto>()
+
+                    .ForMember(
+                        dest => dest.PatientSummary,
+                        opt => opt.MapFrom(src => src))
+
+                    .ForMember(
+                        dest => dest.AppointmentToReturn,
+                        opt => opt.MapFrom(src =>
+                            src.Reminders
+                                .Where(m =>
+                                    m.Type ==
+                                    ReminderType.Appointment)));
+
+
+                // ================================
+                // Patient -> PatientRoutineDto
+                // ================================
+
+                CreateMap<Patient,
+                    PatientRoutineDto>()
+
+                    .ForMember(
+                        dest => dest.PatientSummary,
+                        opt => opt.MapFrom(src => src))
+
+                    .ForMember(
+                        dest => dest.RoutineToReturn,
+                        opt => opt.MapFrom(src =>
+                            src.Reminders
+                                .Where(m =>
+                                    m.Type ==
+                                    ReminderType.Routine)));
         }
     }
 }

@@ -1,6 +1,9 @@
+using BFCAI.Nesyan.Application.Abstraction.Models.Appointments;
 using BFCAI.Nesyan.Application.Abstraction.Models.Assessments;
-using BFCAI.Nesyan.Application.Abstraction.Models.Medications;
+using BFCAI.Nesyan.Application.Abstraction.Models.IoT;
 using BFCAI.Nesyan.Application.Abstraction.Models.MindGames;
+using BFCAI.Nesyan.Application.Abstraction.Models.Reminders.Medications;
+using BFCAI.Nesyan.Application.Abstraction.Models.Routines;
 using System.Collections.Generic;
 
 namespace BFCAI.Nesyan.Application.Abstraction.Models.Patients
@@ -24,8 +27,11 @@ namespace BFCAI.Nesyan.Application.Abstraction.Models.Patients
         public string BloodType { get; set; } = null!;
         public string ChronicDisease { get; set; } = null!;
 
-        public IEnumerable<MedicationToReturnDto> Medications { get; set; } = new List<MedicationToReturnDto>();
-        public IEnumerable<PatientMindGameDto> AssignedGames { get; set; } = new List<PatientMindGameDto>();
+        public IEnumerable<TelemetryRequestDto> Telemetries { get; set; } = new List<TelemetryRequestDto>();
         public IEnumerable<AssessmentsToReturnDto> Assessments { get; set; } = new List<AssessmentsToReturnDto>();
+        public IEnumerable<MedicationToReturnDto> Medications { get; set; } = new List<MedicationToReturnDto>();
+        public IEnumerable<AppointmentToReturnDto> Appointments { get; set; } = new List<AppointmentToReturnDto>();
+        public IEnumerable<RoutineToReturnDto> Routines { get; set; } = new List<RoutineToReturnDto>();
+        public IEnumerable<PatientMindGameDto> AssignedGames { get; set; } = new List<PatientMindGameDto>();
     }
 }

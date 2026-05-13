@@ -1,9 +1,14 @@
 ﻿using AutoMapper;
 using BFCAI.Nesyan.Application.Abstraction.Models._Relations.RelativePatient;
+using BFCAI.Nesyan.Application.Abstraction.Models.Appointments;
 using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
 using BFCAI.Nesyan.Application.Abstraction.Models.Relatives;
+using BFCAI.Nesyan.Application.Abstraction.Models.Reminders.Medications;
+using BFCAI.Nesyan.Application.Abstraction.Models.Routines;
 using BFCAI.Nesyan.Application.Abstraction.Services._Relations;
+using BFCAI.Nesyan.Application.Common.Exceptions;
 using BFCAI.Nesyan.Domain.Contracts;
+using BFCAI.Nesyan.Domain.Entities.Medications;
 using BFCAI.Nesyan.Domain.Entities.Primary.Relatives;
 using BFCAI.Nesyan.Domain.Entities.Relations.Primary;
 using BFCAI.Nesyan.Domain.Specifications.PatientRelatives;
@@ -20,9 +25,9 @@ namespace BFCAI.Nesyan.Application.Services._Reltaions.RelativePatient
     {
         public async Task<RelativePatientsDto> GetRelativePatients(int relativeId)
         {
-            var spec =new GetRelativePatientsSpecification(relativeId);
+            var spec = new GetRelativePatientsSpecification(relativeId);
             var relative = await unitOfWork.GetRepository<Relative, int>().GetWithSpecAsync(spec);
-            var relativePatientsDto= new RelativePatientsDto
+            var relativePatientsDto = new RelativePatientsDto
             {
                 RelativeSummary =
                     mapper.Map<RelativeSummaryDto>(relative),
@@ -35,18 +40,89 @@ namespace BFCAI.Nesyan.Application.Services._Reltaions.RelativePatient
         }
         public async Task<RelativePatientHomeDto> GetPatientHomeAsync(int relativeId, int patientId)
         {
-            var sepcs=new PatientRelativeHomeSpecifications(relativeId,patientId);
+            var sepcs = new PatientRelativeHomeSpecifications(relativeId, patientId);
             var relativePatient = await unitOfWork.GetRepository<PatientRelative, int>().GetWithSpecAsync(sepcs);
             var relativePatientsDto = new RelativePatientHomeDto
             {
                 RelativeSummary =
                   mapper.Map<RelativeSummaryDto>(relativePatient?.Relative),
 
-                Patient = 
+                Patient =
                   mapper.Map<PatientHomeDto>(relativePatient?.Patient)
 
             };
             return relativePatientsDto;
         }
+        public async Task<RelativePatientRemindersDto> GetPatientReminders(int relativeId, int patientId, int reminderType)
+        {
+            var specs = new RelativePatientRemindersSpecifications(relativeId, patientId);
+            var relativePatient = await unitOfWork.GetRepository<PatientRelative, int>().GetWithSpecAsync(specs);
+            if (relativePatient is null)
+                throw new NotFoundException(nameof(relativePatient), new { rId = relativeId, pId = patientId });
+             RelativePatientRemindersDto patientsRemindesDto;
+
+            switch (reminderType)
+            {
+                case 1:
+                     patientsRemindesDto = new RelativePatientRemindersDto
+                    {
+
+                        RelativeSummary =
+                          mapper.Map<RelativeSummaryDto>(relativePatient?.Relative),
+
+                        PatientMedications =
+                          mapper.Map<PatientMedicationsDto>(relativePatient?.Patient),
+
+                        PatientAppointments = null,
+                        PatientRoutines = null
+
+                    }; ;
+
+
+                    break;
+
+
+                case 2:
+
+                     patientsRemindesDto = new RelativePatientRemindersDto
+                    {
+
+                        RelativeSummary =
+                          mapper.Map<RelativeSummaryDto>(relativePatient?.Relative),
+
+                        PatientMedications = null,
+
+                        PatientAppointments =
+                          mapper.Map<PatientAppointmentsDto>(relativePatient?.Patient),
+
+                        PatientRoutines = null
+
+                    }; ;
+
+                    break;
+                case 3:
+                     patientsRemindesDto = new RelativePatientRemindersDto
+                    {
+
+                        RelativeSummary =
+                          mapper.Map<RelativeSummaryDto>(relativePatient?.Relative),
+
+                        PatientMedications = null,
+
+                        PatientAppointments = null,
+
+                        PatientRoutines = mapper.Map<PatientRoutineDto>(relativePatient?.Patient)
+
+                    }; ;
+
+                    break;
+
+
+                default:
+                    throw new Exception("Invalid reminder type");
+            }
+            return patientsRemindesDto;
+        }
+
     }
 }

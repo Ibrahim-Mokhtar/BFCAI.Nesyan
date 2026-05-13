@@ -2,7 +2,6 @@ using AutoMapper;
 using BFCAI.Nesyan.Application.Abstraction.Models._Relations.RelativePatient;
 using BFCAI.Nesyan.Application.Abstraction.Models.Caregivers;
 using BFCAI.Nesyan.Application.Abstraction.Models.Doctors;
-using BFCAI.Nesyan.Application.Abstraction.Models.Medications;
 using BFCAI.Nesyan.Application.Abstraction.Models.MindGames;
 using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
 using BFCAI.Nesyan.Application.Abstraction.Models.Relatives;
@@ -61,9 +60,7 @@ namespace BFCAI.Nesyan.Application.Mapping
                 .ForMember(d => d.Gender, o => o.MapFrom(s => s.Gender.ToString()));
 
 
-            // Medications
-            CreateMap<MedicationToCreateDto, Medication>();
-            CreateMap<Medication, MedicationToReturnDto>();
+
 
             // Mind Games
             CreateMap<MindGame, MindGameDto>();

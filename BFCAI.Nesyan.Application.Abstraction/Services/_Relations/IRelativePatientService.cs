@@ -11,6 +11,7 @@ namespace BFCAI.Nesyan.Application.Abstraction.Services._Relations
     {
         public Task<RelativePatientsDto> GetRelativePatients(int relativeId);
         public Task<RelativePatientHomeDto> GetPatientHomeAsync(int relativeId, int patientId);
+        public  Task<RelativePatientRemindersDto> GetPatientReminders(int relativeId, int patientId, int reminderType);
         //Task<IEnumerable<ReminderDto>> GetPatientRemindersAsync(int relativeId, int patientId);
 
         //Task<ReminderDto?> GetReminderAsync(int relativeId,int patientId, int reminderId);
