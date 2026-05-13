@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
+using BFCAI.Nesyan.Application.Abstraction.Models.Assessments;
+using BFCAI.Nesyan.Application.Abstraction.Models.IoT;
 using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
 using BFCAI.Nesyan.Application.Abstraction.Models.Relatives;
+using BFCAI.Nesyan.Domain.Entities.Assessments;
+using BFCAI.Nesyan.Domain.Entities.IoT;
 using BFCAI.Nesyan.Domain.Entities.Primary.Patients;
 using BFCAI.Nesyan.Domain.Entities.Primary.Relatives;
 using BFCAI.Nesyan.Domain.Entities.Relations.Primary;
@@ -17,51 +21,187 @@ namespace BFCAI.Nesyan.Application.Mapping
         public PatientRelativeMappingProfile()
         {
 
-            CreateMap<PatientRelative, PatientSummaryDto>()
-            .ForMember(
-                dest => dest.PatientId,
-                opt => opt.MapFrom(src =>
-                    src.Patient.Id))
+            CreateMap<PatientTelemetry,
+                TelemetryRequestDto>();
 
-            .ForMember(
-                dest => dest.FullName,
-                opt => opt.MapFrom(src =>
-                    src.Patient.FName + " " +
-                    src.Patient.LName))
+            CreateMap<Assessment,
+                AssessmentsToReturnDto>()
 
-            .ForMember(
-            dest => dest.Age,
-            opt => opt.MapFrom(src =>
-                src.Patient.Age))
+                .ForMember(
+                    dest => dest.RecognitionOfName,
+                    opt => opt.MapFrom(src =>
+                        src.RecognitionOfName.ToString()))
 
-            .ForMember(
-                dest => dest.Gender,
-                opt => opt.MapFrom(src =>
-                    src.Patient.Gender))
+                .ForMember(
+                    dest => dest.RecognitionOfPlace,
+                    opt => opt.MapFrom(src =>
+                        src.RecognitionOfPlace.ToString()))
 
-            .ForMember(
-                dest => dest.CurrentStage,
-                opt => opt.MapFrom(src =>
-                    src.Patient.CurrentStage));
+                .ForMember(
+                    dest => dest.RecognitionOfTime,
+                    opt => opt.MapFrom(src =>
+                        src.RecognitionOfTime.ToString()))
+
+                .ForMember(
+                    dest => dest.AbilityToConcentrate,
+                    opt => opt.MapFrom(src =>
+                        src.AbilityToConcentrate.ToString()))
+
+                .ForMember(
+                    dest => dest.RecallOfRecentEvents,
+                    opt => opt.MapFrom(src =>
+                        src.RecallOfRecentEvents.ToString()))
+
+                .ForMember(
+                    dest => dest.AnxietyOrStress,
+                    opt => opt.MapFrom(src =>
+                        src.AnxietyOrStress.ToString()))
+
+                .ForMember(
+                    dest => dest.DepressionOrSadness,
+                    opt => opt.MapFrom(src =>
+                        src.DepressionOrSadness.ToString()))
+
+                .ForMember(
+                    dest => dest.Aggression,
+                    opt => opt.MapFrom(src =>
+                        src.Aggression.ToString()))
+
+                .ForMember(
+                    dest => dest.EatingAndDrinking,
+                    opt => opt.MapFrom(src =>
+                        src.EatingAndDrinking.ToString()))
+
+                .ForMember(
+                    dest => dest.Bathing,
+                    opt => opt.MapFrom(src =>
+                        src.Bathing.ToString()))
+
+                .ForMember(
+                    dest => dest.Dressing,
+                    opt => opt.MapFrom(src =>
+                        src.Dressing.ToString()))
+
+                .ForMember(
+                    dest => dest.UsingBathroom,
+                    opt => opt.MapFrom(src =>
+                        src.UsingBathroom.ToString()))
+
+                .ForMember(
+                    dest => dest.Mobility,
+                    opt => opt.MapFrom(src =>
+                        src.Mobility.ToString()));
 
 
-            CreateMap<Relative, RelativeSummaryDto>()
-             .ForMember(
-                 dest => dest.RelativeId,
-                 opt => opt.MapFrom(src => src.Id))
-             .ForMember(
-                 dest => dest.FullName,
-                 opt => opt.MapFrom(src =>
-                     $"{src.FName} {src.LName}"));
+            // ================================
+            // PatientRelative -> PatientSummary
+            // ================================
 
-            CreateMap<Patient, PatientSummaryDto>()
+            CreateMap<PatientRelative,
+                PatientSummaryDto>()
+
                 .ForMember(
                     dest => dest.PatientId,
-                    opt => opt.MapFrom(src => src.Id))
+                    opt => opt.MapFrom(src =>
+                        src.Patient.Id))
+
+                .ForMember(
+                    dest => dest.FullName,
+                    opt => opt.MapFrom(src =>
+                        src.Patient.FName + " " +
+                        src.Patient.LName))
+
+                .ForMember(
+                    dest => dest.Age,
+                    opt => opt.MapFrom(src =>
+                        src.Patient.Age))
+
+                .ForMember(
+                    dest => dest.Gender,
+                    opt => opt.MapFrom(src =>
+                        src.Patient.Gender))
+
+                .ForMember(
+                    dest => dest.CurrentStage,
+                    opt => opt.MapFrom(src =>
+                        src.Patient.CurrentStage))
+
+                .ForMember(
+                    dest => dest.CurrentStageName,
+                    opt => opt.MapFrom(src =>
+                        src.Patient.CurrentStage.ToString()));
+
+
+            // ================================
+            // Relative -> RelativeSummary
+            // ================================
+
+            CreateMap<Relative,
+                RelativeSummaryDto>()
+
+                .ForMember(
+                    dest => dest.RelativeId,
+                    opt => opt.MapFrom(src =>
+                        src.Id))
+
                 .ForMember(
                     dest => dest.FullName,
                     opt => opt.MapFrom(src =>
                         $"{src.FName} {src.LName}"));
+
+
+            // ================================
+            // Patient -> PatientSummary
+            // ================================
+
+            CreateMap<Patient,
+                PatientSummaryDto>()
+
+                .ForMember(
+                    dest => dest.PatientId,
+                    opt => opt.MapFrom(src =>
+                        src.Id))
+
+                .ForMember(
+                    dest => dest.FullName,
+                    opt => opt.MapFrom(src =>
+                        $"{src.FName} {src.LName}"))
+                .ForMember(
+                    dest => dest.CurrentStage,
+                    opt => opt.MapFrom(src =>
+                        src.CurrentStage))
+
+                .ForMember(
+                    dest => dest.CurrentStageName,
+                    opt => opt.MapFrom(src =>
+                        src.CurrentStage.ToString()));
+
+            // ================================
+            // Patient -> PatientHome
+            // ================================
+
+            CreateMap<Patient,
+                PatientHomeDto>()
+
+                .ForMember(
+                    dest => dest.Patient,
+                    opt => opt.MapFrom(src => src))
+
+                .ForMember(
+                    dest => dest.LatestTelemetry,
+                    opt => opt.MapFrom(src =>
+                        src.PatientTelemetries
+                            .OrderByDescending(t =>
+                                t.CreatedOn)
+                            .FirstOrDefault()))
+
+                .ForMember(
+                    dest => dest.LatestAssessment,
+                    opt => opt.MapFrom(src =>
+                        src.Assessments
+                            .OrderByDescending(a =>
+                                a.CreatedOn)
+                            .FirstOrDefault()));
         }
     }
 }

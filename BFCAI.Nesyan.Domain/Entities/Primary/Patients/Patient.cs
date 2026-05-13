@@ -1,5 +1,6 @@
 ﻿
 using BFCAI.Nesyan.Domain.Entities.Assessments;
+using BFCAI.Nesyan.Domain.Entities.IoT;
 using BFCAI.Nesyan.Domain.Entities.Medications;
 using BFCAI.Nesyan.Domain.Entities.Primary.Doctors;
 using BFCAI.Nesyan.Domain.Entities.Relations;
@@ -41,5 +42,6 @@ namespace BFCAI.Nesyan.Domain.Entities.Primary.Patients
 
         public ICollection<Medication> Medications { get; set; }= new List<Medication>();
         public ICollection<Assessment> Assessments { get; set; }= new List<Assessment>();
+        public ICollection<PatientTelemetry> PatientTelemetries { get; set; } = new List<PatientTelemetry>();
     }
 }

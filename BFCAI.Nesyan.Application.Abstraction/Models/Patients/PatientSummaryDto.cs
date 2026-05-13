@@ -17,5 +17,6 @@ namespace BFCAI.Nesyan.Application.Abstraction.Models.Patients
         public string Gender { get; set; } = null!;
 
         public int CurrentStage { get; set; }
+        public string CurrentStageName { get; set; } = null!;
     }
 }

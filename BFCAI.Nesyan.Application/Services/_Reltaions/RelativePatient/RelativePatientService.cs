@@ -27,24 +27,24 @@ namespace BFCAI.Nesyan.Application.Services._Reltaions.RelativePatient
                 RelativeSummary =
                     mapper.Map<RelativeSummaryDto>(relative),
 
-                Patients =
+                PatientsSummary =
                     mapper.Map<IEnumerable<PatientSummaryDto>>(
                     relative?.Patients)
             };
             return relativePatientsDto;
         }
-        public async Task<RelativePatientsDto> GetPatientHomeAsync(int relativeId, int patientId)
+        public async Task<RelativePatientHomeDto> GetPatientHomeAsync(int relativeId, int patientId)
         {
             var sepcs=new PatientRelativeHomeSpecifications(relativeId,patientId);
             var relativePatient = await unitOfWork.GetRepository<PatientRelative, int>().GetWithSpecAsync(sepcs);
-            var relativePatientsDto = new RelativePatientsDto
+            var relativePatientsDto = new RelativePatientHomeDto
             {
                 RelativeSummary =
                   mapper.Map<RelativeSummaryDto>(relativePatient?.Relative),
 
-                Patients = new List<PatientSummaryDto> {
-                  mapper.Map<PatientSummaryDto>(relativePatient?.Patient)
-            }
+                Patient = 
+                  mapper.Map<PatientHomeDto>(relativePatient?.Patient)
+
             };
             return relativePatientsDto;
         }

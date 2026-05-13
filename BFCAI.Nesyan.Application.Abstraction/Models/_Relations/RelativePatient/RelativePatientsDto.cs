@@ -11,6 +11,6 @@ namespace BFCAI.Nesyan.Application.Abstraction.Models._Relations.RelativePatient
     public class RelativePatientsDto
     {
         public RelativeSummaryDto RelativeSummary { get; set; } = new();
-        public IEnumerable<PatientSummaryDto> Patients { get; set; }= new List<PatientSummaryDto>();
+        public IEnumerable<PatientSummaryDto> PatientsSummary { get; set; }= new List<PatientSummaryDto>();
     }
 }
