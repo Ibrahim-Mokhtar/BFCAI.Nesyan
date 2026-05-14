@@ -79,10 +79,6 @@ namespace BFCAI.Nesyan.Application.Services.Caregivers
                     break;
 
 
-                // =========================
-                // Appointments
-                // =========================
-
                 case 2:
 
                     caregiverPatientReminders =new CaregiverPatientRemindersDto
@@ -97,10 +93,6 @@ namespace BFCAI.Nesyan.Application.Services.Caregivers
 
                     break;
 
-
-                // =========================
-                // Routines
-                // =========================
 
                 case 3:
 

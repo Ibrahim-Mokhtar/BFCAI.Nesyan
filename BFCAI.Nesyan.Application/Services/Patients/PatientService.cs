@@ -1,17 +1,20 @@
-using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
-using BFCAI.Nesyan.Application.Abstraction.Models.MindGames;
-
-using BFCAI.Nesyan.Application.Abstraction.Services.Patients;
-using BFCAI.Nesyan.Domain.Contracts;
-using BFCAI.Nesyan.Domain.Entities.Primary.Patients;
 using AutoMapper;
+using BFCAI.Nesyan.Application.Abstraction.Models.Caregivers;
+using BFCAI.Nesyan.Application.Abstraction.Models.IoT;
+using BFCAI.Nesyan.Application.Abstraction.Models.MindGames;
+using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
+using BFCAI.Nesyan.Application.Abstraction.Services.Patients;
+using BFCAI.Nesyan.Application.Common.Exceptions;
+using BFCAI.Nesyan.Domain.Contracts;
+using BFCAI.Nesyan.Domain.Entities.MindGames;
+using BFCAI.Nesyan.Domain.Entities.Primary.Patients;
+using BFCAI.Nesyan.Domain.Entities.Relations.MindGames;
+using BFCAI.Nesyan.Domain.Specifications.Patients;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BFCAI.Nesyan.Domain.Entities.MindGames;
-using BFCAI.Nesyan.Domain.Entities.Relations.MindGames;
 
 namespace BFCAI.Nesyan.Application.Services.Patients
 {
@@ -32,45 +35,81 @@ namespace BFCAI.Nesyan.Application.Services.Patients
             await UnitOfWork.CompleteAsync();
         }
 
-        public async Task<PatientFullProfileDto> GetPatientProfileAsync(int patientId)
+        public async Task<PatientHomeDto> GetPatientHome(int patientId)
         {
-            var patientRepo = UnitOfWork.GetRepository<Patient, int>();
-            var patient = await patientRepo.Get(patientId);
-            if (patient == null) throw new Exception("Patient not found");
-
-            var pgRepo = UnitOfWork.GetRepository<MindGameSession, int>();
-            var gameRepo = UnitOfWork.GetRepository<MindGame, int>();
-
-            var allPG = await pgRepo.GetAllAsync(false);
-            var patientGames = allPG.Where(pg => pg.PatientId == patientId).ToList();
-
-            var gameDtos = Mapper.Map<List<PatientMindGameDto>>(patientGames);
-            var allGames = await gameRepo.GetAllAsync(false);
-            foreach (var g in gameDtos)
-            {
-                var gameEntity = allGames.FirstOrDefault(x => x.Id == g.MindGameId);
-                if (gameEntity != null) g.MindGame = Mapper.Map<MindGameDto>(gameEntity);
-            }
-
-            var profileDto = Mapper.Map<PatientFullProfileDto>(patient);
-            profileDto.AssignedGames = gameDtos;
-
-            return profileDto;
+            var specs = new PatientSpecifications(patientId);
+            var patient=await UnitOfWork.GetRepository<Patient,int>().GetWithSpecAsync(specs);
+            if (patient is null)
+                throw new NotFoundException(nameof(patient), patientId);
+            var patientHomeDto = Mapper.Map<PatientHomeDto>(patient);
+            return patientHomeDto;
         }
 
-        public async Task<IEnumerable<PatientToReturnDto>> GetPatientsAsync()
+        public async Task<IEnumerable<PatientSummaryDto>> GetPatientsAsync()
         {
             var repo = UnitOfWork.GetRepository<Patient, int>();
             var patients = await repo.GetAllAsync();
-            return Mapper.Map<IEnumerable<PatientToReturnDto>>(patients);
+            return Mapper.Map<IEnumerable<PatientSummaryDto>>(patients);
         }
 
-        public async Task<PatientToReturnDto> GetPatientAsync(int id)
+        public async Task<PatientRemindersDto> GetPatientReminder(int patientId, int reminderType)
         {
-            var repo = UnitOfWork.GetRepository<Patient, int>();
-            var patient = await repo.Get(id);
-            if (patient is null) throw new Exception("Patient not found");
-            return Mapper.Map<PatientToReturnDto>(patient);
+            var specs = new PatientSpecifications(patientId, reminderType);
+            var patient = await UnitOfWork.GetRepository<Patient, int>().GetWithSpecAsync(specs);
+            if (patient is null)
+                throw new NotFoundException(nameof(patient), new { patientId, reminderType });
+            PatientRemindersDto patientRemindersDto;
+            switch (reminderType)
+            {
+
+                case 1:
+                    patientRemindersDto = new PatientRemindersDto
+                    {
+                        PatientMedications =
+                                Mapper.Map<PatientMedicationsDto>(patient),
+
+                        AppointmentToReturn = null,
+
+                        RoutineToReturn = null
+                    };
+
+                    break;
+
+
+                case 2:
+
+                    patientRemindersDto = new PatientRemindersDto
+                    {
+                        PatientMedications = null,
+
+                        AppointmentToReturn =
+                                Mapper.Map<PatientAppointmentsDto>(patient),
+
+                        RoutineToReturn = null
+                    };
+
+                    break;
+
+
+                case 3:
+
+                    patientRemindersDto = new PatientRemindersDto
+                    {
+                        PatientMedications = null,
+
+                        AppointmentToReturn = null,
+
+                        RoutineToReturn =
+                            Mapper.Map<PatientRoutineDto>(patient)
+                    };
+
+                    break;
+
+                default:
+                    throw new Exception("Invalid reminder type");
+            }
+            return patientRemindersDto;
+
         }
 
         public async Task<PatientToReturnDto> CreatePatientAsync(PatientToCreateDto patientToCreate)
@@ -121,5 +160,7 @@ namespace BFCAI.Nesyan.Application.Services.Patients
             repo.Delete(patient);
             await UnitOfWork.CompleteAsync();
         }
+
+
     }
 }

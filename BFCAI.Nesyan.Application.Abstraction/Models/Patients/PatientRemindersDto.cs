@@ -10,9 +10,8 @@ namespace BFCAI.Nesyan.Application.Abstraction.Models.Patients
 {
     public class PatientRemindersDto
     {
-        public PatientSummaryDto PatientSummary { get; set; } = null!;
-        public IEnumerable<AppointmentToReturnDto>? AppointmentToReturn { get; set; }
-        public IEnumerable<RoutineToReturnDto>? RoutineToReturn { get; set; }
-        public IEnumerable<PatientMedicationsDto>? PatientMedications { get; set; }
+        public  PatientAppointmentsDto? AppointmentToReturn { get; set; }
+        public  PatientRoutineDto? RoutineToReturn { get; set; }
+        public  PatientMedicationsDto? PatientMedications { get; set; }
     }
 }

@@ -23,17 +23,12 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Patients
         }
 
         [HttpGet("{id}/profile")]
-        public async Task<ActionResult<PatientFullProfileDto>> GetPatientProfile(int id)
+        public async Task<ActionResult<PatientFullProfileDto>> GetPatientHome(int id)
         {
-            try
-            {
-                var profile = await serviceManager.PatientService.GetPatientProfileAsync(id);
+
+                var profile = await serviceManager.PatientService.GetPatientHome(id);
                 return Ok(profile);
-            }
-            catch (System.Exception ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
+
         }
 
         [HttpGet]
@@ -43,18 +38,12 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Patients
             return Ok(patients);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PatientToReturnDto>> GetPatient(int id)
+        [HttpGet("{patientId}/reminders")]
+        public async Task<IActionResult>GetPatientReminder(int patientId,[FromQuery]int reminderType)
         {
-            try
-            {
-                var patient = await serviceManager.PatientService.GetPatientAsync(id);
-                return Ok(patient);
-            }
-            catch (System.Exception ex)
-            {
-                return NotFound($"Patient with id {id} not found: {ex.Message}");
-            }
+            var result = await serviceManager.PatientService.GetPatientReminder(patientId,reminderType);
+
+            return Ok(result);
         }
 
         [HttpPost]
