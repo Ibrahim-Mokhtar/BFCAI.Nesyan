@@ -39,8 +39,9 @@ namespace BFCAI.Nesyan.Domain.Entities.Primary.Patients
         public string ChronicDisease { get; set; } = null!;
 
         public int? DoctorId { get; set; }
-        public Doctor? Doctor { get; set; }
         public int? CaregiverId { get; set; }
+
+        public Doctor? Doctor { get; set; }
         public Caregiver? Caregiver { get; set; }
         public ICollection<Medication> Reminders { get; set; }= new List<Medication>();
         public ICollection<Assessment> Assessments { get; set; }= new List<Assessment>();

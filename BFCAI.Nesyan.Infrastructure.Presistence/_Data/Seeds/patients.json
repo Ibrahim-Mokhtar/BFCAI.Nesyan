@@ -14,7 +14,10 @@
     "Gender": 0,
     "Country": "Egypt",
     "City": "Cairo",
-    "Age": 65
+    "Age": 65,
+    "DoctorId": 1,
+    "CaregiverId": 1
+
   },
   {
     "CurrentStage": 2,
@@ -31,6 +34,8 @@
     "Gender": 1,
     "Country": "Egypt",
     "City": "Giza",
-    "Age": 72
+    "Age": 72,
+    "DoctorId": 1,
+    "CaregiverId": 1
   }
 ]

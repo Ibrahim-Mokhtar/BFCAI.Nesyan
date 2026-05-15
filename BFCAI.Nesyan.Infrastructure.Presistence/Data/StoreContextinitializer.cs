@@ -17,6 +17,9 @@ using BFCAI.Nesyan.Domain.Entities.MindGames;
 using BFCAI.Nesyan.Domain.Entities.Reports;
 using BFCAI.Nesyan.Domain.Entities.Medications;
 using Microsoft.Data.SqlClient;
+using BFCAI.Nesyan.Domain.Entities.IoT;
+using BFCAI.Nesyan.Domain.Entities.Assessments;
+using BFCAI.Nesyan.Domain.Entities.Relations.Primary;
 
 namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
 {
@@ -141,6 +144,19 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
                     }
                 }
 
+                
+                if (!await DbContext.Caregivers.AnyAsync())
+                {
+                    var caregiversData = await File.ReadAllTextAsync("../BFCAI.Nesyan.Infrastructure.Presistence/_Data/Seeds/caregivers.json");
+                    var caregivers = JsonSerializer.Deserialize<List<Caregiver>>(caregiversData);
+
+                    if (caregivers?.Count > 0)
+                    {
+                        await DbContext.Set<Caregiver>().AddRangeAsync(caregivers);
+                        await DbContext.SaveChangesAsync();
+                    }
+                }
+
                 if (!await DbContext.Patients.AnyAsync())
                 {
                     var patientsData = await File.ReadAllTextAsync("../BFCAI.Nesyan.Infrastructure.Presistence/_Data/Seeds/patients.json");
@@ -165,17 +181,6 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
                     }
                 }
 
-                if (!await DbContext.Caregivers.AnyAsync())
-                {
-                    var caregiversData = await File.ReadAllTextAsync("../BFCAI.Nesyan.Infrastructure.Presistence/_Data/Seeds/caregivers.json");
-                    var caregivers = JsonSerializer.Deserialize<List<Caregiver>>(caregiversData);
-
-                    if (caregivers?.Count > 0)
-                    {
-                        await DbContext.Set<Caregiver>().AddRangeAsync(caregivers);
-                        await DbContext.SaveChangesAsync();
-                    }
-                }
 
                 if (!await DbContext.Alerts.AnyAsync())
                 {
@@ -221,6 +226,40 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
                     if (reports?.Count > 0)
                     {
                         await DbContext.Set<Report>().AddRangeAsync(reports);
+                        await DbContext.SaveChangesAsync();
+                    }
+                }
+                if (!await DbContext.PatientTelemetries.AnyAsync())
+                {
+                    var telemetryData = await File.ReadAllTextAsync("../BFCAI.Nesyan.Infrastructure.Presistence/_Data/Seeds/Telementry.json");
+                    var telemetry = JsonSerializer.Deserialize<List<PatientTelemetry>>(telemetryData);
+
+                    if (telemetry?.Count > 0)
+                    {
+                        await DbContext.Set<PatientTelemetry>().AddRangeAsync(telemetry);
+                        await DbContext.SaveChangesAsync();
+                    }
+                }
+
+                if (!await DbContext.Assessments.AnyAsync())
+                {
+                    var assessmentData = await File.ReadAllTextAsync("../BFCAI.Nesyan.Infrastructure.Presistence/_Data/Seeds/Assesment.json");
+                    var assessments = JsonSerializer.Deserialize<List<Assessment>>(assessmentData);
+
+                    if (assessments?.Count > 0)
+                    {
+                        await DbContext.Set<Assessment>().AddRangeAsync(assessments);
+                        await DbContext.SaveChangesAsync();
+                    }
+                }
+                if (!await DbContext.PatientRelatives.AnyAsync())
+                {
+                    var patientRelativesData = await File.ReadAllTextAsync("../BFCAI.Nesyan.Infrastructure.Presistence/_Data/Seeds/PatientRelative.json");
+                    var patientRelatives = JsonSerializer.Deserialize<List<PatientRelative>>(patientRelativesData);
+
+                    if (patientRelatives?.Count > 0)
+                    {
+                        await DbContext.Set<PatientRelative>().AddRangeAsync(patientRelatives);
                         await DbContext.SaveChangesAsync();
                     }
                 }
