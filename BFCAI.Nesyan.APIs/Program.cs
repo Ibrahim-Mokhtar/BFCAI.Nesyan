@@ -1,4 +1,4 @@
-using BFCAI.Nesyan;
+﻿using BFCAI.Nesyan;
 using BFCAI.Nesyan.APIs.Extensions;
 using BFCAI.Nesyan.Application;
 using BFCAI.Nesyan.Infrastructure.Presistence;
@@ -18,37 +18,51 @@ namespace BFCAI.Nesyan.APIs
             var builder = WebApplication.CreateBuilder(args);
 
             #region Configure Services
-            // Add services to the container.
+
             builder.Services
                 .AddControllers()
                 .ConfigureApiBehaviorOptions(options =>
                 {
                     options.SuppressModelStateInvalidFilter = false;
                     options.InvalidModelStateResponseFactory = context =>
+                    {
+                        var errors = context.ModelState.Where(P => P.Value!.Errors.Count > 0)
+                        .Select(P => new ApiValidationErrorResponse.ValidationError
                         {
-                            var errors = context.ModelState.Where(P => P.Value!.Errors.Count > 0)
-                            .Select(P => new ApiValidationErrorResponse.ValidationError
-                            {
-                                Field = P.Key,
-                                Errors = P.Value!.Errors.Select(E => E.ErrorMessage)
-                            });
-                            return new BadRequestObjectResult(new ApiValidationErrorResponse
-                            {
-                                Errors = errors
+                            Field = P.Key,
+                            Errors = P.Value!.Errors.Select(E => E.ErrorMessage)
+                        });
 
-                            });
-                        };
-
+                        return new BadRequestObjectResult(new ApiValidationErrorResponse
+                        {
+                            Errors = errors
+                        });
+                    };
                 })
                 .AddApplicationPart(typeof(Controllers.AssemblyInformation).Assembly);
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddSignalR();
-            builder.Services.AddScoped<BFCAI.Nesyan.Application.Abstraction.Services.IoT.ITelemetryNotifier, BFCAI.Nesyan.APIs.Hubs.SignalRTelemetryNotifier>();
+
+            builder.Services.AddScoped<
+                BFCAI.Nesyan.Application.Abstraction.Services.IoT.ITelemetryNotifier,
+                BFCAI.Nesyan.APIs.Hubs.SignalRTelemetryNotifier>();
 
             builder.Services.AddPresistenceService(builder.Configuration);
             builder.Services.AddApplicationService();
+
+            // ✅ ADD CORS HERE
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy
+                        .AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -56,41 +70,43 @@ namespace BFCAI.Nesyan.APIs
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:AccessKey"]!)),
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:AccessKey"]!)
+                        ),
                         ValidateIssuer = true,
                         ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
                         ValidateAudience = true,
                         ValidAudience = builder.Configuration["JwtSettings:Audience"],
-                        ValidateLifetime = false // No expire date to the token as requested
+                        ValidateLifetime = false
                     };
                 });
+
             #endregion
 
             var app = builder.Build();
 
             #region Database Initialization
             await app.InitializerStoreContextAsync();
-            #endregion  
+            #endregion
 
-            #region Configure Kestrel Middlewares
+            #region Configure Middlewares
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
             app.UseMiddleware<ExceptionHandllerMiddleware>();
-            // app.UseHttpsRedirection(); // Commented out to allow ESP32 HTTP traffic without 307 redirects
+
+            // ❗ IMPORTANT: Use CORS BEFORE Auth
+            app.UseCors("AllowAll");
 
             app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
             app.MapHub<BFCAI.Nesyan.APIs.Hubs.TelemetryHub>("/telemetryHub");
 
             app.Run();
+
             #endregion
         }
     }
