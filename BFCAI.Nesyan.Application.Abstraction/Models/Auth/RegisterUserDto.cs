@@ -1,5 +1,6 @@
 using BFCAI.Nesyan.Domain.Entities.Primary;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace BFCAI.Nesyan.Application.Abstraction.Models.Auth
 {
@@ -33,5 +34,6 @@ namespace BFCAI.Nesyan.Application.Abstraction.Models.Auth
         public string City { get; set; } = null!;
         [Required]
         public int Age { get; set; }
+        public IFormFile? Image { get; set; }
     }
 }

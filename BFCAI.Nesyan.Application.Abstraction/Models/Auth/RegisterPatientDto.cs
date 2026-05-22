@@ -16,7 +16,5 @@ namespace BFCAI.Nesyan.Application.Abstraction.Models.Auth
         public BloodType BloodType { get; set; }
         
         public List<string> Diseases { get; set; } = new List<string>();
-        
-        public IFormFile? Image { get; set; }
     }
 }

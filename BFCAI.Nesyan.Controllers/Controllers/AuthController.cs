@@ -44,7 +44,7 @@ namespace BFCAI.Nesyan.Controllers.Controllers
         }
 
         [HttpPost("register-relative")]
-        public async Task<IActionResult> RegisterRelative([FromBody] RegisterRelativeDto dto)
+        public async Task<IActionResult> RegisterRelative([FromForm] RegisterRelativeDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -57,7 +57,7 @@ namespace BFCAI.Nesyan.Controllers.Controllers
         }
 
         [HttpPost("register-caregiver")]
-        public async Task<IActionResult> RegisterCaregiver([FromBody] RegisterCaregiverDto dto)
+        public async Task<IActionResult> RegisterCaregiver([FromForm] RegisterCaregiverDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
