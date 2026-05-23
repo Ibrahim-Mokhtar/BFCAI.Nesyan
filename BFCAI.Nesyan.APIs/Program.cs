@@ -101,6 +101,7 @@ namespace BFCAI.Nesyan.APIs
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseStaticFiles();
 
             app.MapControllers();
             app.MapHub<BFCAI.Nesyan.APIs.Hubs.TelemetryHub>("/telemetryHub");
