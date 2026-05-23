@@ -24,6 +24,64 @@ namespace BFCAI.Nesyan.Controllers.Controllers.MindGames
             }
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<MindGameDto>> GetGameById(int id)
+        {
+            try
+            {
+                var game = await MindGamesService.GetMindGameByIdAsync(id);
+                if (game == null) return NotFound(new { Message = $"Mind game with ID {id} not found." });
+                return Ok(game);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<MindGameDto>> CreateGame([FromForm] MindGameCreateDto dto)
+        {
+            try
+            {
+                var game = await MindGamesService.CreateMindGameAsync(dto);
+                return CreatedAtAction(nameof(GetGameById), new { id = game.Id }, game);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<MindGameDto>> UpdateGame(int id, [FromForm] MindGameUpdateDto dto)
+        {
+            try
+            {
+                var game = await MindGamesService.UpdateMindGameAsync(id, dto);
+                return Ok(game);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteGame(int id)
+        {
+            try
+            {
+                var success = await MindGamesService.DeleteMindGameAsync(id);
+                if (!success) return NotFound(new { Message = $"Mind game with ID {id} not found." });
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
         [HttpGet("patient/{patientId}")]
         public async Task<ActionResult<IEnumerable<PatientMindGameDto>>> GetPatientGames(int patientId)
         {
@@ -63,6 +121,34 @@ namespace BFCAI.Nesyan.Controllers.Controllers.MindGames
             catch (Exception ex)
             {
                 return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPost("patient/{patientId}/pattern-game")]
+        public async Task<ActionResult<PatternGameRecordDto>> SubmitPatternGameResult(int patientId, [FromBody] PatternGameRecordToCreateDto dto)
+        {
+            try
+            {
+                var result = await MindGamesService.SubmitPatternGameResultAsync(patientId, dto);
+                return CreatedAtAction(nameof(GetPatientPatternGameHistory), new { patientId }, result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpGet("patient/{patientId}/pattern-game/history")]
+        public async Task<ActionResult<IEnumerable<PatternGameRecordDto>>> GetPatientPatternGameHistory(int patientId)
+        {
+            try
+            {
+                var history = await MindGamesService.GetPatientPatternGameHistoryAsync(patientId);
+                return Ok(history);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { Message = ex.Message });
             }
         }
     }

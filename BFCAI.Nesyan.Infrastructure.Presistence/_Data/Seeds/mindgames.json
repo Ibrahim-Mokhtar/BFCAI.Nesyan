@@ -1,14 +1,14 @@
 [
   {
-    "Name": "Memory Match",
-    "Category": "Memory",
-    "Brief": "A simple card matching game to improve short-term memory.",
-    "TargetMetrics": "Accuracy, Time to Complete"
+    "Title": "Memory Match",
+    "Subtitle": "A simple card matching game to improve short-term memory.",
+    "Image": "images/memory-match.png",
+    "Level": "Easy"
   },
   {
-    "Name": "Word Puzzle",
-    "Category": "Cognitive",
-    "Brief": "Find hidden words in a grid to stimulate language processing.",
-    "TargetMetrics": "Words Found, Time to Complete"
+    "Title": "Word Puzzle",
+    "Subtitle": "Find hidden words in a grid to stimulate language processing.",
+    "Image": "images/word-puzzle.png",
+    "Level": "Medium"
   }
 ]

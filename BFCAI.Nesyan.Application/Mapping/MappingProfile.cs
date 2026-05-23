@@ -72,7 +72,15 @@ namespace BFCAI.Nesyan.Application.Mapping
 
             // Mind Games
             CreateMap<MindGame, MindGameDto>();
+            CreateMap<MindGameCreateDto, MindGame>()
+                .ForMember(dest => dest.Image, opt => opt.Ignore());
+            CreateMap<MindGameUpdateDto, MindGame>()
+                .ForMember(dest => dest.Image, opt => opt.Ignore());
             CreateMap<MindGameSession, PatientMindGameDto>();
+            CreateMap<PatternGameRecord, PatternGameRecordDto>()
+                .ForMember(d => d.PatternLevel, o => o.MapFrom(s => s.PatternLevel.ToString()));
+            CreateMap<PatternGameRecordToCreateDto, PatternGameRecord>()
+                .ForMember(dest => dest.PatternLevel, opt => opt.MapFrom(src => Enum.Parse<PatternLevel>(src.PatternLevel, true)));
 
             // Relatives
             CreateMap<RelativeToCreateDto, Relative>()

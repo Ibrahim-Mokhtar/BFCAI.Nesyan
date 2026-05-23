@@ -1,4 +1,4 @@
-﻿using BFCAI.Nesyan.Domain.Entities.MindGames;
+using BFCAI.Nesyan.Domain.Entities.MindGames;
 using BFCAI.Nesyan.Infrastructure.Presistence.Data.Config.Base;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -13,16 +13,16 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Config.MindGames
     {
         public override void Configure(EntityTypeBuilder<MindGame> builder)
         {
-            builder.Property(x => x.Name)
+            builder.Property(x => x.Title)
                 .IsRequired();
 
-            builder.Property(x => x.Category)
+            builder.Property(x => x.Subtitle)
                 .IsRequired();
 
-            builder.Property(x => x.Brief)
+            builder.Property(x => x.Image)
                 .IsRequired();
 
-            builder.Property(x => x.TargetMetrics)
+            builder.Property(x => x.Level)
                 .IsRequired();
 
             builder.Ignore(x => x.CreatedBy);

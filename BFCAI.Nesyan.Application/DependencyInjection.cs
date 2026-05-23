@@ -36,6 +36,8 @@ namespace BFCAI.Nesyan.Application
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IMindGamesService, MindGamesService>();
+            services.AddScoped<IMedicationService, MedicationService>();
             services.AddSingleton<BFCAI.Nesyan.Application.Abstraction.Services.IoT.ITelemetryStore, BFCAI.Nesyan.Application.Services.IoT.TelemetryStore>();
             return services;
         }

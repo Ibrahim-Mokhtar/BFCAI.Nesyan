@@ -7,8 +7,10 @@ using BFCAI.Nesyan.Domain.Entities.Primary.Doctors;
 using BFCAI.Nesyan.Domain.Entities.Primary.Patients;
 using BFCAI.Nesyan.Domain.Entities.Relations.MindGames;
 using BFCAI.Nesyan.Domain.Entities.Relations.Primary;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,11 +18,79 @@ namespace BFCAI.Nesyan.Application.Services.MindGames
 {
     public class MindGamesService(IUnitOfWork UnitOfWork, IMapper Mapper) : IMindGamesService
     {
+        private async Task<string> SaveFileAsync(IFormFile file, string folderName)
+        {
+            if (file == null || file.Length == 0) return string.Empty;
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Uploads", folderName);
+            if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+            var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+            return $"/Uploads/{folderName}/{uniqueFileName}";
+        }
+
         public async Task<IEnumerable<MindGameDto>> GetGameCatalogAsync()
         {
             var repo = UnitOfWork.GetRepository<MindGame, int>();
             var games = await repo.GetAllAsync(false);
             return Mapper.Map<IEnumerable<MindGameDto>>(games);
+        }
+
+        public async Task<MindGameDto?> GetMindGameByIdAsync(int id)
+        {
+            var repo = UnitOfWork.GetRepository<MindGame, int>();
+            var game = await repo.Get(id);
+            if (game == null) return null;
+            return Mapper.Map<MindGameDto>(game);
+        }
+
+        public async Task<MindGameDto> CreateMindGameAsync(MindGameCreateDto dto)
+        {
+            var repo = UnitOfWork.GetRepository<MindGame, int>();
+            var game = Mapper.Map<MindGame>(dto);
+            
+            if (dto.Image != null)
+            {
+                game.Image = await SaveFileAsync(dto.Image, "MindGames");
+            }
+
+            await repo.AddAsync(game);
+            await UnitOfWork.CompleteAsync();
+
+            return Mapper.Map<MindGameDto>(game);
+        }
+
+        public async Task<MindGameDto> UpdateMindGameAsync(int id, MindGameUpdateDto dto)
+        {
+            var repo = UnitOfWork.GetRepository<MindGame, int>();
+            var game = await repo.Get(id);
+            if (game == null) throw new Exception("Mind game not found.");
+
+            Mapper.Map(dto, game);
+
+            if (dto.Image != null)
+            {
+                game.Image = await SaveFileAsync(dto.Image, "MindGames");
+            }
+
+            repo.Update(game);
+            await UnitOfWork.CompleteAsync();
+
+            return Mapper.Map<MindGameDto>(game);
+        }
+
+        public async Task<bool> DeleteMindGameAsync(int id)
+        {
+            var repo = UnitOfWork.GetRepository<MindGame, int>();
+            var game = await repo.Get(id);
+            if (game == null) return false;
+
+            repo.Delete(game);
+            await UnitOfWork.CompleteAsync();
+            return true;
         }
 
         public async Task<IEnumerable<PatientMindGameDto>> GetPatientGamesAsync(int patientId)
@@ -90,6 +160,37 @@ namespace BFCAI.Nesyan.Application.Services.MindGames
 
             repo.Delete(assignment);
             await UnitOfWork.CompleteAsync();
+        }
+
+        public async Task<PatternGameRecordDto> SubmitPatternGameResultAsync(int patientId, PatternGameRecordToCreateDto dto)
+        {
+            var patientRepo = UnitOfWork.GetRepository<Patient, int>();
+            var recordRepo = UnitOfWork.GetRepository<PatternGameRecord, int>();
+
+            if (await patientRepo.Get(patientId) is null)
+                throw new Exception("Patient not found.");
+
+            var record = Mapper.Map<PatternGameRecord>(dto);
+            record.PatientId = patientId;
+
+            await recordRepo.AddAsync(record);
+            await UnitOfWork.CompleteAsync();
+
+            return Mapper.Map<PatternGameRecordDto>(record);
+        }
+
+        public async Task<IEnumerable<PatternGameRecordDto>> GetPatientPatternGameHistoryAsync(int patientId)
+        {
+            var patientRepo = UnitOfWork.GetRepository<Patient, int>();
+            var recordRepo = UnitOfWork.GetRepository<PatternGameRecord, int>();
+
+            if (await patientRepo.Get(patientId) is null)
+                throw new Exception("Patient not found.");
+
+            var allRecords = await recordRepo.GetAllAsync(false);
+            var patientRecords = allRecords.Where(r => r.PatientId == patientId).OrderByDescending(r => r.DateTime).ToList();
+
+            return Mapper.Map<IEnumerable<PatternGameRecordDto>>(patientRecords);
         }
     }
 }

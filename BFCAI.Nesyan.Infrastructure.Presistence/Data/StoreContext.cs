@@ -41,6 +41,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
 
         public DbSet<MindGame>MindGames { get; set; }
         public DbSet<MindGameSession>MindGameSessions { get; set; }
+        public DbSet<PatternGameRecord> PatternGameRecords { get; set; }
         public DbSet<Report>Reports { get; set; }
         public DbSet<Medication> Medications { get; set; }
         public DbSet<Assessment> Assessments { get; set; }
