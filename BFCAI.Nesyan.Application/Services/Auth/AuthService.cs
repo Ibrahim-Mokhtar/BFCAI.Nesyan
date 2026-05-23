@@ -134,7 +134,8 @@ namespace BFCAI.Nesyan.Application.Services.Auth
                 Token = string.Empty,
                 UserId = user.Id,
                 Email = user.Email,
-                Role = "Patient"
+                Role = "Patient",
+                Stage = user.CurrentStage.ToString()
             };
         }
 
@@ -290,6 +291,12 @@ namespace BFCAI.Nesyan.Application.Services.Auth
 
             var token = GenerateJwtToken(user, role);
 
+            string? stage = null;
+            if (role == "Patient" && user is Patient patient)
+            {
+                stage = patient.CurrentStage.ToString();
+            }
+
             return new AuthResponseDto
             {
                 IsSuccess = true,
@@ -297,7 +304,8 @@ namespace BFCAI.Nesyan.Application.Services.Auth
                 Token = token,
                 UserId = user.Id,
                 Email = user.Email,
-                Role = role
+                Role = role,
+                Stage = stage
             };
         }
 

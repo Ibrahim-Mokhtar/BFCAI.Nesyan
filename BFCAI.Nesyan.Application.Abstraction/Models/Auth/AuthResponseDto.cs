@@ -8,5 +8,6 @@ namespace BFCAI.Nesyan.Application.Abstraction.Models.Auth
         public int? UserId { get; set; }
         public string? Email { get; set; }
         public string? Role { get; set; }
+        public string? Stage { get; set; }
     }
 }
