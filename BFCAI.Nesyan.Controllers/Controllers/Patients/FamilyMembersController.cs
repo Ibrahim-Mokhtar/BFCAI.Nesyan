@@ -1,0 +1,87 @@
+using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
+using BFCAI.Nesyan.Application.Abstraction.Services;
+using BFCAI.Nesyan.Controllers.Controllers.Base;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace BFCAI.Nesyan.Controllers.Controllers.Patients
+{
+    public class FamilyMembersController(IServiceManager serviceManager) : BaseApiController
+    {
+        [HttpGet("patient/{patientId}")]
+        public async Task<ActionResult<IEnumerable<FamilyMemberDto>>> GetPatientFamilyMembers(int patientId)
+        {
+            try
+            {
+                var members = await serviceManager.FamilyMembersService.GetFamilyMembersByPatientIdAsync(patientId);
+                return Ok(members);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<FamilyMemberDto>> GetFamilyMember(int id)
+        {
+            try
+            {
+                var member = await serviceManager.FamilyMembersService.GetFamilyMemberByIdAsync(id);
+                if (member == null)
+                    return NotFound($"Family member with ID {id} not found.");
+                return Ok(member);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<FamilyMemberDto>> CreateFamilyMember([FromForm] FamilyMemberCreateDto dto)
+        {
+            try
+            {
+                var member = await serviceManager.FamilyMembersService.CreateFamilyMemberAsync(dto);
+                return CreatedAtAction(nameof(GetFamilyMember), new { id = member.Id }, member);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<FamilyMemberDto>> UpdateFamilyMember(int id, [FromForm] FamilyMemberUpdateDto dto)
+        {
+            try
+            {
+                var member = await serviceManager.FamilyMembersService.UpdateFamilyMemberAsync(id, dto);
+                return Ok(member);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteFamilyMember(int id)
+        {
+            try
+            {
+                var success = await serviceManager.FamilyMembersService.DeleteFamilyMemberAsync(id);
+                if (!success)
+                    return NotFound($"Family member with ID {id} not found.");
+                return NoContent(); // 204
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+    }
+}

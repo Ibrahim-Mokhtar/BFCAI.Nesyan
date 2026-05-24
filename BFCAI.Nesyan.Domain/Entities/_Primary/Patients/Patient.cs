@@ -48,5 +48,6 @@ namespace BFCAI.Nesyan.Domain.Entities.Primary.Patients
         public ICollection<Assessment> Assessments { get; set; }= new List<Assessment>();
         public ICollection<PatientTelemetry> PatientTelemetries { get; set; } = new List<PatientTelemetry>();
         public ICollection<PatientRelative> PatientRelatives { get; set; } = new List<PatientRelative>();
+        public ICollection<FamilyMember> FamilyMembers { get; set; } = new List<FamilyMember>();
     }
 }

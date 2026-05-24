@@ -43,6 +43,7 @@ namespace BFCAI.Nesyan.Application.Services
         private readonly Lazy<BFCAI.Nesyan.Application.Abstraction.Services.Caregivers.ICaregiverService> _caregiverService;
         private readonly Lazy<ITelemetryService> _telemetryService;
         private readonly Lazy<IRelativePatientService> _relativePatientService;
+        private readonly Lazy<IFamilyMembersService> _familyMembersService;
 
         private readonly IEmailService _emailService;
 
@@ -62,6 +63,7 @@ namespace BFCAI.Nesyan.Application.Services
             _caregiverService = new Lazy<BFCAI.Nesyan.Application.Abstraction.Services.Caregivers.ICaregiverService>(() => new CaregiverService(_unitOfWork, _mapper));
             _telemetryService = new Lazy<ITelemetryService>(() => new TelemetryService(telemetryStore, _unitOfWork));
             _relativePatientService = new Lazy<IRelativePatientService>(() => new RelativePatientService(_unitOfWork, _mapper));
+            _familyMembersService = new Lazy<IFamilyMembersService>(() => new FamilyMembersService(_unitOfWork, _mapper));
         }
         public IDoctorService DoctorService => _doctorService.Value;
 
@@ -80,5 +82,7 @@ namespace BFCAI.Nesyan.Application.Services
         public ITelemetryService TelemetryService => _telemetryService.Value;
 
         public IRelativePatientService RelativePatientService => _relativePatientService.Value;
+
+        public IFamilyMembersService FamilyMembersService => _familyMembersService.Value;
     }
 }

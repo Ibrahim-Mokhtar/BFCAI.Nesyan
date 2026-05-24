@@ -38,6 +38,7 @@ namespace BFCAI.Nesyan.Application
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMindGamesService, MindGamesService>();
             services.AddScoped<IMedicationService, MedicationService>();
+            services.AddScoped<IFamilyMembersService, FamilyMembersService>();
             services.AddSingleton<BFCAI.Nesyan.Application.Abstraction.Services.IoT.ITelemetryStore, BFCAI.Nesyan.Application.Services.IoT.TelemetryStore>();
             return services;
         }

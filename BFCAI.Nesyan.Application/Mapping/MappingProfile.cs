@@ -188,6 +188,13 @@ namespace BFCAI.Nesyan.Application.Mapping
                             .FirstOrDefault()));
             CreateMap<Patient,PatientMedicalDto>();
 
+            CreateMap<FamilyMember, FamilyMemberDto>();
+            CreateMap<FamilyMemberCreateDto, FamilyMember>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.AudioUrl, opt => opt.Ignore());
+            CreateMap<FamilyMemberUpdateDto, FamilyMember>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.AudioUrl, opt => opt.Ignore());
 
         }
     }
