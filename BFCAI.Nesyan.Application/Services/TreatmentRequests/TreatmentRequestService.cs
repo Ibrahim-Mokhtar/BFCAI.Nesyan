@@ -1,129 +1,121 @@
 using AutoMapper;
 using BFCAI.Nesyan.Application.Abstraction.Models.TreatmentRequests;
 using BFCAI.Nesyan.Application.Abstraction.Services.TreatmentRequests;
+using BFCAI.Nesyan.Application.Common.Exceptions;
 using BFCAI.Nesyan.Domain.Contracts;
 using BFCAI.Nesyan.Domain.Entities.Primary.Doctors;
 using BFCAI.Nesyan.Domain.Entities.Primary.Patients;
 using BFCAI.Nesyan.Domain.Entities.Primary.Relatives;
 using BFCAI.Nesyan.Domain.Entities.Relations.Primary;
+using BFCAI.Nesyan.Domain.Specifications.PatientRelatives;
+using BFCAI.Nesyan.Domain.Specifications.RequestTreatment;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace BFCAI.Nesyan.Application.Services.TreatmentRequests
 {
     public class TreatmentRequestService(IUnitOfWork UnitOfWork, IMapper Mapper) : ITreatmentRequestService
     {
-        public async Task<TreatmentRequestToReturnDto> CreateRequestAsync(TreatmentRequestToCreateDto dto)
+        public async Task RealtiveCreateRequestAsync(TreatmentRequestToCreateDto dto)
         {
-            var patientRepo = UnitOfWork.GetRepository<Patient, int>();
-            var doctorRepo = UnitOfWork.GetRepository<Doctor, int>();
-            var relativeRepo = UnitOfWork.GetRepository<Relative, int>();
-
-            if (await patientRepo.Get(dto.PatientId) is null)
-                throw new Exception("Patient not found");
-
-            if (await doctorRepo.Get(dto.DoctorId) is null)
-                throw new Exception("Doctor not found");
-
-            if (await relativeRepo.Get(dto.RelativeId) is null)
-                throw new Exception("Relative not found");
-
-            var request = Mapper.Map<RelativeDoctorRequest>(dto);
-            request.Status = RequestStatus.Pending;
-            request.RequestDate = dto.RequestDate ?? DateTime.UtcNow;
-            request.CreatedOn = DateTime.UtcNow;
-            request.CreatedBy = "System";
-            request.LastModifiedOn = DateTime.UtcNow;
-            request.LastModifiedBy = "System";
-
             var repo = UnitOfWork.GetRepository<RelativeDoctorRequest, int>();
+            var checkPatintStatusSpec = new CheckPatintStatusSpecifications(dto.PatientId);
+            var checkPatintStatus = await repo.GetAllWithSpecAsync(checkPatintStatusSpec);
+            if (checkPatintStatus.Any())
+                throw new BadRequestException("This Patient Already Have An Doctor");
+            var specs = new RelativePatientCheckSpecifications(dto.RelativeId, dto.PatientId);
+            var relativePatient = await UnitOfWork.GetRepository<PatientRelative, int>().GetWithSpecAsync(specs);
+            if (relativePatient == null)
+                throw new NotFoundException(nameof(relativePatient), new { dto.RelativeId, dto.PatientId });
+            var doctor = await UnitOfWork.GetRepository<Doctor, int>().Get(dto.DoctorId);
+            if (doctor == null)
+                throw new NotFoundException(nameof(doctor), dto.DoctorId);
+            var request = Mapper.Map<RelativeDoctorRequest>(dto);
             await repo.AddAsync(request);
             await UnitOfWork.CompleteAsync();
-
-            return await GetMappedRequestDto(request.Id);
         }
 
         public async Task<IEnumerable<TreatmentRequestToReturnDto>> GetDoctorPendingRequestsAsync(int doctorId)
         {
-            var repo = UnitOfWork.GetRepository<RelativeDoctorRequest, int>();
-            // Since there's no generic Include out of the box in the snippet we saw, we might just map directly or fetch related explicitly if needed.
-            // For now, assuming GetAll returns standard query or using straightforward mapping
-            var requests = await repo.GetAllAsync();
-            var pendingRequests = requests.Where(r => r.DoctorId == doctorId && r.Status == RequestStatus.Pending).ToList();
-
-            var result = new List<TreatmentRequestToReturnDto>();
-            foreach (var req in pendingRequests)
-            {
-                result.Add(await GetMappedRequestDto(req.Id));
-            }
-            return result;
+            var specs = new DoctorTreatmentRequestsSpecifications(doctorId);
+            var requests =await UnitOfWork.GetRepository<RelativeDoctorRequest, int>().GetAllWithSpecAsync(specs);
+            if (requests == null)
+                throw new NotFoundException(nameof(requests), doctorId);
+            var requestToReturn = Mapper.Map<IEnumerable<TreatmentRequestToReturnDto>>(requests);
+            return requestToReturn;
         }
 
-        public async Task AcceptRequestAsync(int requestId)
+        public async Task DoctorAcceptRequestAsync(int requestId,int doctorId)
         {
             var repo = UnitOfWork.GetRepository<RelativeDoctorRequest, int>();
             var request = await repo.Get(requestId);
-            if (request == null) throw new Exception("Request not found");
-
+            if (request == null)
+                throw new NotFoundException(nameof(request), requestId);
+            if (request.DoctorId != doctorId)
+                throw new UnAuthourizedException("This request does not belong to this Doctor");
+            if (request.Status == RequestStatus.Rejected)
+                throw new BadRequestException("This request is already rejected");
             request.Status = RequestStatus.Accepted;
-            request.LastModifiedOn = DateTime.UtcNow;
-            request.LastModifiedBy = "System";
             repo.Update(request);
-
-            // Fetch Doctor and Patient to bind them
-            var doctorRepo = UnitOfWork.GetRepository<Doctor, int>();
-            var patientRepo = UnitOfWork.GetRepository<Patient, int>();
-
-            var doctor = await doctorRepo.Get(request.DoctorId);
-            var patient = await patientRepo.Get(request.PatientId);
-
-            //var doctorPatientsList = await patientDoctorRepo.GetAllAsync(doctor.Id);
-            //if (doctor != null && patient != null)
-            //{
-            //    // This assumes EF tracks the collection. If lazy loading/includes are missing, 
-            //    // we might need to manually ensure collection is initialized.
-            //    if (doctor.Patients == null) doctor.Patients = new List<Patient>();
-            //    doctor.Patients.Add(patient);
-            //}
-
             await UnitOfWork.CompleteAsync();
         }
 
-        public async Task RejectRequestAsync(int requestId)
+        public async Task RelativeSelectDoctorAsync(int requestId, int relativeId)
         {
             var repo = UnitOfWork.GetRepository<RelativeDoctorRequest, int>();
             var request = await repo.Get(requestId);
-            if (request == null) throw new Exception("Request not found");
+            
+            if (request == null)
+                throw new NotFoundException(nameof(request), requestId);
+            
+            if (request.RelativeId != relativeId)
+                throw new UnAuthourizedException("This request does not belong to this Relative");
+           
+            var checkPatintStatusSpec = new CheckPatintStatusSpecifications(request.PatientId);
+            var checkPatintStatus = await repo.GetAllWithSpecAsync(checkPatintStatusSpec);
+            if (checkPatintStatus.Any())
+                throw new BadRequestException("This Patient Already Have An Doctor");
+            if (request.Status != RequestStatus.Accepted)
+                throw new BadRequestException("Doctor Should Accept Request First");
+            request.Status = RequestStatus.Selected;
+            repo.Update(request);
+
+            var patientRepo =UnitOfWork.GetRepository<Patient, int>();
+            var patient=await patientRepo.Get(request.PatientId);
+            if (patient == null)
+                throw new NotFoundException(nameof(patient), request.PatientId);
+            patient.DoctorId = request.DoctorId;
+            patientRepo.Update(patient);
+            await UnitOfWork.CompleteAsync();
+        }
+        public async Task DoctorRejectRequestAsync(int requestId,int doctorId)
+        {
+            var repo = UnitOfWork.GetRepository<RelativeDoctorRequest, int>();
+            var request = await repo.Get(requestId);
+            if (request == null)
+                throw new NotFoundException(nameof(request), requestId);
+            if (request.DoctorId != doctorId)
+                throw new UnAuthourizedException("This request does not belong to this Doctor");
+            if (request.Status == RequestStatus.Selected)
+                throw new BadRequestException("cannot reject this Request");
 
             request.Status = RequestStatus.Rejected;
-            request.LastModifiedOn = DateTime.UtcNow;
-            request.LastModifiedBy = "System";
+            repo.Update(request);
+            await UnitOfWork.CompleteAsync();
+        }
+        public async Task RelativeRejectRequestAsync(int requestId, int relativeId)
+        {
+            var repo = UnitOfWork.GetRepository<RelativeDoctorRequest, int>();
+            var request = await repo.Get(requestId);
+            if (request == null)
+                throw new NotFoundException(nameof(request), requestId);
+            if (request.RelativeId != relativeId)
+                throw new UnAuthourizedException("This request does not belong to this Relative");
+            if (request.Status == RequestStatus.Selected)
+                throw new BadRequestException("cannot reject this Request");
+            request.Status = RequestStatus.Rejected;
             repo.Update(request);
             await UnitOfWork.CompleteAsync();
         }
 
-        private async Task<TreatmentRequestToReturnDto> GetMappedRequestDto(int id)
-        {
-            var request = await UnitOfWork.GetRepository<RelativeDoctorRequest, int>().Get(id);
-            if (request is null)
-                throw new Exception("Request not found");
-
-            var patient = await UnitOfWork.GetRepository<Patient, int>().Get(request.PatientId);
-            var doctor = await UnitOfWork.GetRepository<Doctor, int>().Get(request.DoctorId);
-            var relative = await UnitOfWork.GetRepository<Relative, int>().Get(request.RelativeId);
-
-            var dto = Mapper.Map<TreatmentRequestToReturnDto>(request);
-            if (patient != null)
-            {
-                dto.PatientName = $"{patient.FName} {patient.LName}";
-                dto.PatientAge = patient.Age;
-            }
-
-            if (doctor != null)
-                dto.DoctorName = $"{doctor.FName} {doctor.LName}";
-
-            if (relative != null)
-                dto.RelativeName = $"{relative.FName} {relative.LName}";
-
-            return dto;
-        }
     }
 }

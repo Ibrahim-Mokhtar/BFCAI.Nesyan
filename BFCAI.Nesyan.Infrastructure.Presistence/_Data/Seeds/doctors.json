@@ -11,7 +11,9 @@
     "Gender": 0,
     "Country": "Egypt",
     "City": "Cairo",
-    "Age": 45
+    "Age": 45,
+    "Phone": "01062767619",
+    "Specialization": "Neurology"
   },
   {
     "GraduationDegree": "MSc in Psychiatry",
@@ -25,6 +27,8 @@
     "Gender": 1,
     "Country": "Egypt",
     "City": "Alexandria",
-    "Age": 38
+    "Age": 38,
+    "Phone": "01062767618",
+    "Specialization": "Psychiatry"
   }
 ]

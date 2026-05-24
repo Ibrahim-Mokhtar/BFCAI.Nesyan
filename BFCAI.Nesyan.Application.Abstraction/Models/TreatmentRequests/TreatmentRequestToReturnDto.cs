@@ -1,20 +1,16 @@
+using BFCAI.Nesyan.Application.Abstraction.Models.Doctors;
+using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
+using BFCAI.Nesyan.Application.Abstraction.Models.Relatives;
+
 namespace BFCAI.Nesyan.Application.Abstraction.Models.TreatmentRequests
 {
     public class TreatmentRequestToReturnDto
     {
-        public int Id { get; set; }
+        public int requestId { get; set; } 
+        public DoctorSummaryDto DoctorSummary { get; set; } = null!;
+        public RelativeSummaryDto RelativeSummary { get; set; } = null!;
+        public PatientInfoDto PatientInfo { get; set; } = null!;
         public string Status { get; set; } = null!;
-        public DateTime RequestDate { get; set; }
         public string? Notes { get; set; }
-
-        public int PatientId { get; set; }
-        public string PatientName { get; set; } = null!;
-        public int PatientAge { get; set; }
-
-        public int DoctorId { get; set; }
-        public string? DoctorName { get; set; }
-
-        public int RelativeId { get; set; }
-        public string? RelativeName { get; set; }
     }
 }

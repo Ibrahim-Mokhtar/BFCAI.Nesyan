@@ -9,7 +9,7 @@ namespace BFCAI.Nesyan.Application.Common.Exceptions
     public class NotFoundException:BadRequestException
     {
         public NotFoundException(string name,object key)
-            :base($"{name} with {key}is not found ")
+            :base($"{name} with {key} is not found ")
         {
             
         }

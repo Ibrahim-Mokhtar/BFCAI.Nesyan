@@ -1,59 +1,50 @@
 using BFCAI.Nesyan.Application.Abstraction.Models.TreatmentRequests;
+using BFCAI.Nesyan.Application.Abstraction.Services;
 using BFCAI.Nesyan.Application.Abstraction.Services.TreatmentRequests;
 using BFCAI.Nesyan.Controllers.Controllers.Base;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BFCAI.Nesyan.Controllers.Controllers.TreatmentRequests
 {
-    public class TreatmentRequestsController(ITreatmentRequestService Service) : BaseApiController
+    public class TreatmentRequestsController(IServiceManager ServiceManager) : BaseApiController
     {
         [HttpPost]
-        public async Task<ActionResult<TreatmentRequestToReturnDto>> CreateRequest(TreatmentRequestToCreateDto dto)
+        public async Task<IActionResult> CreateRequest(TreatmentRequestToCreateDto dto)
         {
-            try
-            {
-                var result = await Service.CreateRequestAsync(dto);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.InnerException?.Message ?? ex.Message);
-            }
+            await ServiceManager.TreatmentRequestService.RealtiveCreateRequestAsync(dto);
+            return Ok("Request created successfuly");
         }
 
         [HttpGet("doctor/{doctorId}/pending")]
         public async Task<ActionResult<IEnumerable<TreatmentRequestToReturnDto>>> GetPendingRequests(int doctorId)
         {
-            var requests = await Service.GetDoctorPendingRequestsAsync(doctorId);
+            var requests = await ServiceManager.TreatmentRequestService.GetDoctorPendingRequestsAsync(doctorId);
             return Ok(requests);
         }
 
-        [HttpPatch("{id}/accept")]
-        public async Task<ActionResult> AcceptRequest(int id)
+        [HttpPatch("{requestId}/doctor-accept")]
+        public async Task<ActionResult> DoctorAcceptRequest(int requestId, [FromQuery] int doctorId)
         {
-            try
-            {
-                await Service.AcceptRequestAsync(id);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await ServiceManager.TreatmentRequestService.DoctorAcceptRequestAsync(requestId, doctorId);
+            return Ok("Treatment request accepted successfully");
         }
-
-        [HttpPatch("{id}/reject")]
-        public async Task<ActionResult> RejectRequest(int id)
+        [HttpPatch("{requestId}/relative-select")]
+        public async Task<ActionResult> RelativeSelectDoctor(int requestId, [FromQuery] int relativeId)
         {
-            try
-            {
-                await Service.RejectRequestAsync(id);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await ServiceManager.TreatmentRequestService.RelativeSelectDoctorAsync(requestId, relativeId);
+            return Ok("Treatment request accepted successfully");
+        }
+        [HttpPatch("{requestId}/doctor-reject")]
+        public async Task<ActionResult> DoctorRejectRequest(int requestId, [FromQuery] int doctorId)
+        {
+            await ServiceManager.TreatmentRequestService.DoctorRejectRequestAsync(requestId,doctorId);
+            return Ok("Treatment request rejected successfully");
+        }
+        [HttpPatch("{requestId}/relative-reject")]
+        public async Task<ActionResult> RelativeRejectRequest(int requestId, [FromQuery] int relativeId)
+        {
+            await ServiceManager.TreatmentRequestService.RelativeRejectRequestAsync(requestId,relativeId);
+            return Ok("Treatment request rejected successfully");
         }
     }
 }

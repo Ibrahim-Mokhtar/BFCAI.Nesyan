@@ -4,9 +4,11 @@ namespace BFCAI.Nesyan.Application.Abstraction.Services.TreatmentRequests
 {
     public interface ITreatmentRequestService
     {
-        Task<TreatmentRequestToReturnDto> CreateRequestAsync(TreatmentRequestToCreateDto dto);
+        Task RealtiveCreateRequestAsync(TreatmentRequestToCreateDto dto);
         Task<IEnumerable<TreatmentRequestToReturnDto>> GetDoctorPendingRequestsAsync(int doctorId);
-        Task AcceptRequestAsync(int requestId);
-        Task RejectRequestAsync(int requestId);
+        Task RelativeSelectDoctorAsync(int requestId, int relativeId);
+        Task DoctorAcceptRequestAsync(int requestId, int doctorId);
+        Task DoctorRejectRequestAsync(int requestId,int doctorId);
+        Task RelativeRejectRequestAsync(int requestId,int relativeId);
     }
 }

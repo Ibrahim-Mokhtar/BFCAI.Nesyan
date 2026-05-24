@@ -36,6 +36,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Config.Relations.Primary
             // Status (Enum → string)
             builder.Property(r => r.Status)
                    .HasConversion<string>()
+                   .HasDefaultValue(RequestStatus.Pending)
                    .HasMaxLength(20)
                    .IsRequired();
 
@@ -51,7 +52,8 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Config.Relations.Primary
 
             builder.HasIndex(r => r.PatientId)
                    .IsUnique()
-                   .HasFilter("[Status] = 'Selected'");
+                   .HasFilter("[Status] = 'Accepted'"); ;
+
         }
     }
 }

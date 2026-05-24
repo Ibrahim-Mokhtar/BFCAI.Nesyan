@@ -17,58 +17,41 @@ namespace BFCAI.Nesyan.Controllers.Controllers._Relations.RelativePatientControl
     public class RelativePatientsController(IServiceManager serviceManager):BaseApiController
     {
         [Microsoft.AspNetCore.Mvc.HttpGet("{relativeId}/patients")]
-        public async Task<ActionResult<RelativePatientsDto>>
-        GetRelativePatients(int relativeId)
+        public async Task<ActionResult<RelativePatientsDto>> GetRelativePatients(int relativeId)
         {
-            var result =
-                await serviceManager.RelativePatientService
-                    .GetRelativePatients(relativeId);
-
-            if (result is null)
-                return NotFound();
-
+            var result =await serviceManager.RelativePatientService.GetRelativePatients(relativeId);
             return Ok(result);
         }
-
         [Microsoft.AspNetCore.Mvc.HttpGet("{relativeId}/patients/{patientId}/home")]
         public async Task<ActionResult<RelativePatientsDto>> GetPatientHome(int relativeId,int patientId)
         {
-            var result =
-                await serviceManager.RelativePatientService.GetPatientHomeAsync(relativeId,patientId);
-
-            if (result is null)
-                return NotFound();
-
+            var result =await serviceManager.RelativePatientService.GetPatientHomeAsync(relativeId,patientId);
             return Ok(result);
         }
         [Microsoft.AspNetCore.Mvc.HttpGet("{relativeId}/patients/{patientId}/reminders")]
         public async Task<IActionResult> GetPatientReminders(int relativeId,int patientId,[FromQuery]int reminderType)
         {
-            var result = 
-                await serviceManager.RelativePatientService.GetPatientReminders(relativeId,patientId,reminderType);
-
+            var result = await serviceManager.RelativePatientService.GetPatientReminders(relativeId,patientId,reminderType);
             return Ok(result);
         }
         [Microsoft.AspNetCore.Mvc.HttpPost("{relativeId}/patients/{patientId}/reminders")]
         public async Task<IActionResult> CreateReminder(int relativeId,int patientId,[FromBody]ReminderToCreateDto dto)
         {
             await serviceManager.RelativePatientService.CreateReminder(relativeId,patientId,dto);
-
-            return Ok();
+            return Ok("Reminder created Successfuly");
         }
         [Microsoft.AspNetCore.Mvc.HttpPut("{relativeId}/patients/{patientId}/reminders/{reminderId}")]
         public async Task<IActionResult>UpdateReminder(int relativeId,int patientId,int reminderId,[FromBody] ReminderToUpdateDto dto)
         {
             await serviceManager.RelativePatientService.UpdateReminder(relativeId,patientId,reminderId,dto);
-
             return NoContent();
         }
         [Microsoft.AspNetCore.Mvc.HttpDelete("{relativeId}/patients/{patientId}/reminders/{reminderId}")]
         public async Task<IActionResult>DeleteReminder(int relativeId,int patientId,int reminderId)
         {
             await serviceManager.RelativePatientService.DeleteReminder(relativeId,patientId,reminderId);
-
             return NoContent();
         }
+
     }
 }

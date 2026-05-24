@@ -32,10 +32,7 @@ namespace BFCAI.Nesyan.APIs.Middlewares
             {
                 if (_env.IsDevelopment())
                     _logger.LogError(ex, ex.Message);
-                else
-                {
 
-                }
                 await HandleExceptionAsync(httpContent, ex);
             }
         }

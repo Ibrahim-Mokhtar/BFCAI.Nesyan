@@ -28,6 +28,18 @@ namespace BFCAI.Nesyan.Application.Mapping
         public MappingProfile()
         {
             CreateMap<Doctor, DoctorToReturnDto>();
+            CreateMap<Doctor, DoctorSummaryDto>()
+                .ForMember(
+                    dest => dest.DoctorId,
+                    opt => opt.MapFrom(
+                        src => src.Id))
+
+                .ForMember(
+                    dest => dest.FullName,
+                    opt => opt.MapFrom(
+                        src =>
+                            $"{src.FName} {src.LName}"));
+
             CreateMap<DoctorToCreateDto, Doctor>()
                     .ForMember(dest => dest.Gender,
                     opt => opt.MapFrom(src => Enum.Parse<Gender>(src.Gender, true)));
@@ -102,6 +114,62 @@ namespace BFCAI.Nesyan.Application.Mapping
 
             CreateMap<CaregiverToReturnDto, Caregiver>()
                     .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => Enum.Parse<Gender>(src.Gender, true)));
+
+            // Treatment request
+           CreateMap<RelativeDoctorRequest,TreatmentRequestToReturnDto>()
+                    .ForMember(
+                        dest=>dest.requestId,
+                        opt=> opt.MapFrom(
+                            src=>src.Id))
+                    .ForMember(
+                        dest => dest.DoctorSummary,
+                        opt => opt.MapFrom(
+                            src => src.Doctor))
+                    
+                    .ForMember(
+                        dest => dest.PatientInfo,
+                        opt => opt.MapFrom(
+                            src => src.Patient))
+                    .ForMember(
+                        dest => dest.RelativeSummary,
+                        opt => opt.MapFrom(
+                            src => src.Relative))
+
+                    .ForMember(
+                        dest => dest.Status,
+                        opt => opt.MapFrom(
+                            src => src.Status.ToString()))
+                    
+                    .ForMember(
+                        dest => dest.Notes,
+                        opt => opt.MapFrom(
+                            src => src.Notes));
+            // ======================================
+            // Patient -> PatientInfoDto
+            // ======================================
+
+            CreateMap<Patient,PatientInfoDto>()
+
+            .ForMember(
+                dest => dest.PatientSummary,
+                opt => opt.MapFrom(
+                    src => src))
+
+            .ForMember(
+                dest => dest.PatientMedical,
+                opt => opt.MapFrom(
+                    src => src))
+
+            .ForMember(
+                dest => dest.LatestAssessment,
+                opt => opt.MapFrom(
+                    src =>
+                        src.Assessments
+                            .OrderByDescending(
+                                a => a.CreatedOn)
+                            .FirstOrDefault()));
+            CreateMap<Patient,PatientMedicalDto>();
+
 
         }
     }

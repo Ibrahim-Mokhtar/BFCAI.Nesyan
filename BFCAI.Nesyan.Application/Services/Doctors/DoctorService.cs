@@ -2,6 +2,7 @@ using AutoMapper;
 using BFCAI.Nesyan.Application.Abstraction.Models.Doctors;
 using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
 using BFCAI.Nesyan.Application.Abstraction.Services.Doctors;
+using BFCAI.Nesyan.Application.Common.Exceptions;
 using BFCAI.Nesyan.Domain.Contracts;
 using BFCAI.Nesyan.Domain.Entities.Primary.Doctors;
 using BFCAI.Nesyan.Domain.Entities.Primary.Patients;
@@ -17,17 +18,34 @@ namespace BFCAI.Nesyan.Application.Services.Doctors
 {
     public class DoctorService(IUnitOfWork UnitOfWork,IMapper Mapper) : IDoctorService
     {
-        public async Task<IEnumerable<DoctorToReturnDto>> GetDoctorsAsync()
+        public async Task<IEnumerable<DoctorSummaryDto>> GetDoctorsAsync()
+        {
+            var doctors = await UnitOfWork.GetRepository<Doctor, int>().GetAllAsync();
+            var doctorsToReturn = Mapper.Map<IEnumerable<DoctorSummaryDto>>(doctors);
+            return doctorsToReturn;
+        }
+
+        public async Task<IEnumerable<DoctorToReturnDto>> GetDoctorsWithSpecAsync()
         {
             var specs = new DoctorSpecs();
             var doctors =await UnitOfWork.GetRepository<Doctor, int>().GetAllWithSpecAsync(specs);
             var doctorsToReturn = Mapper.Map<IEnumerable<DoctorToReturnDto>>(doctors);
             return doctorsToReturn;
         }
-        public async Task<DoctorToReturnDto> GetDoctorAsync(int id)
+        public async Task<DoctorSummaryDto> GetDoctorAsync(int id)
+        {
+            var doctor = await UnitOfWork.GetRepository<Doctor, int>().Get(id);
+            if (doctor == null)
+                throw new NotFoundException(nameof(doctor), id);
+            var doctorToReturn = Mapper.Map<DoctorSummaryDto>(doctor);
+            return doctorToReturn;
+        }
+        public async Task<DoctorToReturnDto> GetDoctorWithSpecAsync(int id)
         {
             var specs = new DoctorSpecs(id);
             var doctor =await UnitOfWork.GetRepository<Doctor, int>().GetWithSpecAsync(specs);
+            if (doctor == null)
+                throw new NotFoundException(nameof(doctor),id);
             var doctorToReturn = Mapper.Map<DoctorToReturnDto>(doctor);
             return doctorToReturn;
         }
@@ -147,5 +165,6 @@ namespace BFCAI.Nesyan.Application.Services.Doctors
                 PendingRequests = pendingRequests
             };
         }
+
     }
 }

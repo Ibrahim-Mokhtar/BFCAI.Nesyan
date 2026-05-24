@@ -25,7 +25,7 @@ namespace BFCAI.Nesyan.Domain.Entities.Relations.Primary
         public Relative Relative { get; set; } = null!;
         public int DoctorId { get; set; }
         public Doctor Doctor { get; set; } = null!;
-        public RequestStatus Status { get; set; }
+        public RequestStatus Status { get; set; } = RequestStatus.Pending;
         public DateTime RequestDate { get; set; }
         public string? Notes { get; set; }
     }
