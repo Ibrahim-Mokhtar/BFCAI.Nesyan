@@ -36,14 +36,6 @@ namespace BFCAI.Nesyan.Application.Services.Patients
             return Mapper.Map<IEnumerable<FamilyMemberDto>>(filtered);
         }
 
-        public async Task<FamilyMemberDto?> GetFamilyMemberByIdAsync(int id)
-        {
-            var repo = UnitOfWork.GetRepository<FamilyMember, int>();
-            var member = await repo.Get(id);
-            if (member == null) return null;
-            return Mapper.Map<FamilyMemberDto>(member);
-        }
-
         public async Task<FamilyMemberDto> CreateFamilyMemberAsync(FamilyMemberCreateDto dto)
         {
             var patientRepo = UnitOfWork.GetRepository<Patient, int>();

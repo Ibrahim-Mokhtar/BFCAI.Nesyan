@@ -24,29 +24,13 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Patients
             }
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<FamilyMemberDto>> GetFamilyMember(int id)
-        {
-            try
-            {
-                var member = await serviceManager.FamilyMembersService.GetFamilyMemberByIdAsync(id);
-                if (member == null)
-                    return NotFound($"Family member with ID {id} not found.");
-                return Ok(member);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
         [HttpPost]
         public async Task<ActionResult<FamilyMemberDto>> CreateFamilyMember([FromForm] FamilyMemberCreateDto dto)
         {
             try
             {
                 var member = await serviceManager.FamilyMembersService.CreateFamilyMemberAsync(dto);
-                return CreatedAtAction(nameof(GetFamilyMember), new { id = member.Id }, member);
+                return CreatedAtAction(nameof(GetPatientFamilyMembers), new { patientId = member.PatientId }, member);
             }
             catch (Exception ex)
             {
