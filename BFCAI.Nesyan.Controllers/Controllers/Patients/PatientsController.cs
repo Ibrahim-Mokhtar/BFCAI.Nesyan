@@ -1,6 +1,7 @@
 using BFCAI.Nesyan.Application.Abstraction.Services;
 using BFCAI.Nesyan.Application.Abstraction.Services.Patients;
 using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
+using BFCAI.Nesyan.Application.Abstraction.Models.Reminders;
 using BFCAI.Nesyan.Controllers.Controllers.Base;
 using Microsoft.AspNetCore.Mvc;
 
@@ -49,6 +50,48 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Patients
             var result = await serviceManager.PatientService.GetPatientReminder(patientId,reminderType);
 
             return Ok(result);
+        }
+
+        [HttpPost("{patientId}/reminders")]
+        public async Task<IActionResult> CreateReminder(int patientId, [FromBody] ReminderToCreateDto dto)
+        {
+            try
+            {
+                await serviceManager.PatientService.CreateReminderAsync(patientId, dto);
+                return Ok("Reminder created Successfuly");
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("{patientId}/reminders/{reminderId}")]
+        public async Task<IActionResult> UpdateReminder(int patientId, int reminderId, [FromBody] ReminderToUpdateDto dto)
+        {
+            try
+            {
+                await serviceManager.PatientService.UpdateReminderAsync(patientId, reminderId, dto);
+                return NoContent();
+            }
+            catch (System.Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpDelete("{patientId}/reminders/{reminderId}")]
+        public async Task<IActionResult> DeleteReminder(int patientId, int reminderId)
+        {
+            try
+            {
+                await serviceManager.PatientService.DeleteReminderAsync(patientId, reminderId);
+                return NoContent();
+            }
+            catch (System.Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         [HttpPost]

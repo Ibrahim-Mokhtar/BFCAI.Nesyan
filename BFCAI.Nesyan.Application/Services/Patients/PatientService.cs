@@ -3,9 +3,11 @@ using BFCAI.Nesyan.Application.Abstraction.Models.Caregivers;
 using BFCAI.Nesyan.Application.Abstraction.Models.IoT;
 using BFCAI.Nesyan.Application.Abstraction.Models.MindGames;
 using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
+using BFCAI.Nesyan.Application.Abstraction.Models.Reminders;
 using BFCAI.Nesyan.Application.Abstraction.Services.Patients;
 using BFCAI.Nesyan.Application.Common.Exceptions;
 using BFCAI.Nesyan.Domain.Contracts;
+using BFCAI.Nesyan.Domain.Entities.Medications;
 using BFCAI.Nesyan.Domain.Entities.MindGames;
 using BFCAI.Nesyan.Domain.Entities.Primary.Patients;
 using BFCAI.Nesyan.Domain.Entities.Relations.MindGames;
@@ -193,6 +195,55 @@ namespace BFCAI.Nesyan.Application.Services.Patients
             await UnitOfWork.CompleteAsync();
         }
 
+        public async Task CreateReminderAsync(int patientId, ReminderToCreateDto dto)
+        {
+            var patientRepo = UnitOfWork.GetRepository<Patient, int>();
+            var patient = await patientRepo.Get(patientId);
+            if (patient is null)
+                throw new NotFoundException(nameof(Patient), patientId);
 
+            var reminder = Mapper.Map<Medication>(dto);
+            reminder.PatientId = patientId;
+            reminder.CreatedBy = patient.UserName ?? "Patient";
+
+            await UnitOfWork.GetRepository<Medication, int>().AddAsync(reminder);
+            await UnitOfWork.CompleteAsync();
+        }
+
+        public async Task UpdateReminderAsync(int patientId, int reminderId, ReminderToUpdateDto dto)
+        {
+            var patientRepo = UnitOfWork.GetRepository<Patient, int>();
+            var patient = await patientRepo.Get(patientId);
+            if (patient is null)
+                throw new NotFoundException(nameof(Patient), patientId);
+
+            var reminderRepo = UnitOfWork.GetRepository<Medication, int>();
+            var reminder = await reminderRepo.Get(reminderId);
+            if (reminder is null || reminder.PatientId != patientId)
+                throw new NotFoundException(nameof(Medication), new { reminderId, patientId });
+
+            Mapper.Map(dto, reminder);
+            reminder.LastModifiedBy = patient.UserName ?? "Patient";
+            reminder.LastModifiedOn = DateTime.UtcNow;
+
+            reminderRepo.Update(reminder);
+            await UnitOfWork.CompleteAsync();
+        }
+
+        public async Task DeleteReminderAsync(int patientId, int reminderId)
+        {
+            var patientRepo = UnitOfWork.GetRepository<Patient, int>();
+            var patient = await patientRepo.Get(patientId);
+            if (patient is null)
+                throw new NotFoundException(nameof(Patient), patientId);
+
+            var reminderRepo = UnitOfWork.GetRepository<Medication, int>();
+            var reminder = await reminderRepo.Get(reminderId);
+            if (reminder is null || reminder.PatientId != patientId)
+                throw new NotFoundException(nameof(Medication), new { reminderId, patientId });
+
+            reminderRepo.Delete(reminder);
+            await UnitOfWork.CompleteAsync();
+        }
     }
 }

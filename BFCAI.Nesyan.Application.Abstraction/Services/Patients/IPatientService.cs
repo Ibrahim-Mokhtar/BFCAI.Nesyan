@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
+using BFCAI.Nesyan.Application.Abstraction.Models.Reminders;
 
 namespace BFCAI.Nesyan.Application.Abstraction.Services.Patients
 {
@@ -18,5 +19,8 @@ namespace BFCAI.Nesyan.Application.Abstraction.Services.Patients
         Task<PatientToReturnDto> CreatePatientAsync(PatientToCreateDto patientToCreate);
         Task UpdatePatientAsync(PatientToReturnDto patientToUpdate);
         Task DeletePatientAsync(int id);
+        Task CreateReminderAsync(int patientId, ReminderToCreateDto dto);
+        Task UpdateReminderAsync(int patientId, int reminderId, ReminderToUpdateDto dto);
+        Task DeleteReminderAsync(int patientId, int reminderId);
     }
 }
