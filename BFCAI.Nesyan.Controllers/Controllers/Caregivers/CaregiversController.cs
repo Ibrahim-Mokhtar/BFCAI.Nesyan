@@ -57,7 +57,7 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Caregivers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateCaregiver(CaregiverToReturnDto dto)
+        public async Task<ActionResult> UpdateCaregiver([FromForm] CaregiverToReturnDto dto)
         {
             try
             {

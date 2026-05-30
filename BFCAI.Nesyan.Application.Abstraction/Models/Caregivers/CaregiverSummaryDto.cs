@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +15,9 @@ namespace BFCAI.Nesyan.Application.Abstraction.Models.Caregivers
         public string Gender { get; set; } = null!;
         public string City { get; set; } = null!;
         public int Age { get; set; }
+        public string Phone { get; set; } = null!;
+        public string? ImageUrl { get; set; }
+        public string NationalId { get; set; } = null!;
+        public string Email { get; set; } = null!;
     }
 }

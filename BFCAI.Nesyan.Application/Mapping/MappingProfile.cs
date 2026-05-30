@@ -144,11 +144,13 @@ namespace BFCAI.Nesyan.Application.Mapping
                     .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender.ToString()));
 
             CreateMap<Caregiver, CaregiverSummaryDto>()
+                    .ForMember(dest => dest.CaregiverId, opt => opt.MapFrom(src => src.Id))
                     .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender.ToString()))
                     .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FName + " " + src.LName));
 
             CreateMap<CaregiverToReturnDto, Caregiver>()
-                    .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => Enum.Parse<Gender>(src.Gender, true)));
+                    .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => Enum.Parse<Gender>(src.Gender, true)))
+                    .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
 
             // Treatment request
            CreateMap<RelativeDoctorRequest,TreatmentRequestToReturnDto>()

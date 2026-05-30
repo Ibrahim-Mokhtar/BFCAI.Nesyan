@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace BFCAI.Nesyan.Application.Services.Caregivers
 {
@@ -139,6 +141,20 @@ namespace BFCAI.Nesyan.Application.Services.Caregivers
             return Mapper.Map<CaregiverToReturnDto>(caregiver);
         }
 
+        private string SaveFile(IFormFile file, string folderName)
+        {
+            if (file == null || file.Length == 0) return string.Empty;
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", folderName);
+            if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+            var uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(fileStream);
+            }
+            return $"/uploads/{folderName}/{uniqueFileName}";
+        }
+
         public async Task UpdateCaregiverAsync(CaregiverToReturnDto caregiverToUpdate)
         {
             var repo = UnitOfWork.GetRepository<Caregiver, int>();
@@ -146,6 +162,12 @@ namespace BFCAI.Nesyan.Application.Services.Caregivers
             if (caregiver is null) throw new Exception("Caregiver not found");
 
             Mapper.Map(caregiverToUpdate, caregiver);
+
+            if (caregiverToUpdate.Image != null)
+            {
+                caregiver.ImageUrl = SaveFile(caregiverToUpdate.Image, "caregivers/avatars");
+            }
+
             caregiver.LastModifiedOn = DateTime.UtcNow;
             caregiver.LastModifiedBy = caregiver.UserName;
 
