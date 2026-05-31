@@ -48,14 +48,32 @@ namespace BFCAI.Nesyan.Application.Services._Reltaions.RelativePatient
             if (patient == null)
                 throw new BadRequestException("Data Incorrect");
             var repo = unitOfWork.GetRepository<PatientRelative, int>();
-            await repo.AddAsync(new PatientRelative { RelativeId = relativeId, PatientId = patient.Id });
+            await repo.AddAsync(new PatientRelative 
+            { 
+                RelativeId = relativeId, 
+                PatientId = patient.Id,
+                EnrollmentDate = DateTime.UtcNow,
+                CreatedBy = "System",
+                CreatedOn = DateTime.UtcNow,
+                LastModifiedBy = "System",
+                LastModifiedOn = DateTime.UtcNow
+            });
             await unitOfWork.CompleteAsync();
         }
 
         public async Task CreateRelativePatientRelation(int relativeId,int patientId)
         {
             var repo =unitOfWork.GetRepository<PatientRelative,int>();
-            await repo.AddAsync(new PatientRelative { RelativeId = relativeId, PatientId = patientId });
+            await repo.AddAsync(new PatientRelative 
+            { 
+                RelativeId = relativeId, 
+                PatientId = patientId,
+                EnrollmentDate = DateTime.UtcNow,
+                CreatedBy = "System",
+                CreatedOn = DateTime.UtcNow,
+                LastModifiedBy = "System",
+                LastModifiedOn = DateTime.UtcNow
+            });
             await unitOfWork.CompleteAsync();
         }
         public async Task<RelativePatientsDto> GetRelativePatients(int relativeId)
