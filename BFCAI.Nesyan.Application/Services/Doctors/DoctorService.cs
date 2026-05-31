@@ -480,9 +480,16 @@ namespace BFCAI.Nesyan.Application.Services.Doctors
                     LatestTelemetryTime = latestTime
                 }
             };
-
             return reportDto;
         }
 
+        public async Task<DoctorProfileDto> GetDoctorProfileAsync(int id)
+        {
+            var specs = new DoctorSpecs(id);
+            var doctor = await UnitOfWork.GetRepository<Doctor, int>().GetWithSpecAsync(specs);
+            if (doctor is null)
+                throw new NotFoundException(nameof(doctor), id);
+            return Mapper.Map<DoctorProfileDto>(doctor);
+        }
     }
 }

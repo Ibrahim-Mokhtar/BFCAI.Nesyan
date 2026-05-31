@@ -25,6 +25,21 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Doctors
             var doctor = await serviceManager.DoctorService.GetDoctorAsync(id);
             return Ok(doctor);
         }
+
+        [HttpGet("{id}/profile")]
+        public async Task<ActionResult<DoctorProfileDto>> GetDoctorProfile(int id)
+        {
+            try
+            {
+                var profile = await serviceManager.DoctorService.GetDoctorProfileAsync(id);
+                return Ok(profile);
+            }
+            catch (System.Exception ex)
+            {
+                return NotFound(new BFCAI.Nesyan.Controllers.Errors.ApiResponse(404, ex.Message));
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<DoctorToReturnDto>> CreateDoctor([FromForm] DoctorToCreateDto request)
         {

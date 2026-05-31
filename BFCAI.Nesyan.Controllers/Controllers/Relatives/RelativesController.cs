@@ -32,6 +32,20 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Relatives
             }
         }
 
+        [HttpGet("{id}/profile")]
+        public async Task<ActionResult<RelativeProfileDto>> GetRelativeProfile(int id)
+        {
+            try
+            {
+                var profile = await serviceManager.RelativeService.GetRelativeProfileAsync(id);
+                return Ok(profile);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new ApiResponse(404, ex.Message));
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<RelativeToReturnDto>> CreateRelative(RelativeToCreateDto request)
         {

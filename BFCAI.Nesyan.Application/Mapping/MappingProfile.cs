@@ -216,6 +216,16 @@ namespace BFCAI.Nesyan.Application.Mapping
                 .ForMember(dest => dest.ImageUrl, opt => opt.Ignore())
                 .ForMember(dest => dest.AudioUrl, opt => opt.Ignore());
 
+            // Actor Profile Mappings
+            CreateMap<Caregiver, CaregiverProfileDto>()
+                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender.ToString()));
+
+            CreateMap<Relative, RelativeProfileDto>()
+                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender.ToString()))
+                .ForMember(dest => dest.Patients, opt => opt.MapFrom(src => src.Patients.Select(pr => pr.Patient)));
+
+            CreateMap<Doctor, DoctorProfileDto>()
+                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender.ToString()));
         }
     }
 }

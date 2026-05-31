@@ -11,5 +11,6 @@ namespace BFCAI.Nesyan.Application.Abstraction.Services.Relatives
         Task<RelativeToReturnDto> CreateRelativeAsync(RelativeToCreateDto relativeToCreate);
         Task UpdateRelativeAsync(RelativeToReturnDto relativeToUpdate);
         Task DeleteRelativeAsync(int id);
+        Task<RelativeProfileDto> GetRelativeProfileAsync(int id);
     }
 }

@@ -3,6 +3,7 @@ using BFCAI.Nesyan.Application.Abstraction.Models.Relatives;
 using BFCAI.Nesyan.Application.Abstraction.Services.Relatives;
 using BFCAI.Nesyan.Domain.Contracts;
 using BFCAI.Nesyan.Domain.Entities.Primary.Relatives;
+using BFCAI.Nesyan.Domain.Specifications.Relatives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -96,6 +97,15 @@ namespace BFCAI.Nesyan.Application.Services.Relatives
 
             repo.Delete(relative);
             await UnitOfWork.CompleteAsync();
+        }
+
+        public async Task<RelativeProfileDto> GetRelativeProfileAsync(int id)
+        {
+            var specs = new GetRelativePatientsSpecification(id);
+            var relative = await UnitOfWork.GetRepository<Relative, int>().GetWithSpecAsync(specs);
+            if (relative is null)
+                throw new Exception("Relative not found");
+            return Mapper.Map<RelativeProfileDto>(relative);
         }
     }
 }

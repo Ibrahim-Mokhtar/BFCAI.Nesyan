@@ -185,5 +185,13 @@ namespace BFCAI.Nesyan.Application.Services.Caregivers
             await UnitOfWork.CompleteAsync();
         }
 
+        public async Task<CaregiverProfileDto> GetCaregiverProfileAsync(int id)
+        {
+            var specs = new CaregiverGetPatientsSpecifications(id);
+            var caregiver = await UnitOfWork.GetRepository<Caregiver, int>().GetWithSpecAsync(specs);
+            if (caregiver is null)
+                throw new NotFoundException(nameof(caregiver), id);
+            return Mapper.Map<CaregiverProfileDto>(caregiver);
+        }
     }
 }

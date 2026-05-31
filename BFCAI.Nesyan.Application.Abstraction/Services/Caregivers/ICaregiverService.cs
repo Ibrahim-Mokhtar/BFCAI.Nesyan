@@ -13,5 +13,6 @@ namespace BFCAI.Nesyan.Application.Abstraction.Services.Caregivers
         public Task<CaregiverPatientRemindersDto> GetPatientReminders(int caregiverId, int patientId, int reminderType);
         Task UpdateCaregiverAsync(CaregiverToReturnDto caregiverToUpdate);
         Task DeleteCaregiverAsync(int id);
+        Task<CaregiverProfileDto> GetCaregiverProfileAsync(int id);
     }
 }

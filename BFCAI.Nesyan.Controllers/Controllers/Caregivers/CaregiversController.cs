@@ -27,6 +27,21 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Caregivers
                 return Ok(caregiver);
            
         }
+
+        [HttpGet("{id}/profile")]
+        public async Task<ActionResult<CaregiverProfileDto>> GetCaregiverProfile(int id)
+        {
+            try
+            {
+                var profile = await serviceManager.CaregiverService.GetCaregiverProfileAsync(id);
+                return Ok(profile);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new ApiResponse(404, ex.Message));
+            }
+        }
+
         [HttpGet("{caregiverId}/patients/{patientId}/home")]
         public async Task<IActionResult> GetPatientHome(int caregiverId,int patientId)
         {
