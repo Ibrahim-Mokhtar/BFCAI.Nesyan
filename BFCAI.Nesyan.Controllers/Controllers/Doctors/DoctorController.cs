@@ -87,5 +87,19 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Doctors
             var stats = await serviceManager.DoctorService.GetDoctorStatisticsAsync(id);
             return Ok(stats);
         }
+
+        [HttpGet("patient/{patientId}/report")]
+        public async Task<ActionResult<PatientReportDto>> GetPatientReport(int patientId)
+        {
+            try
+            {
+                var report = await serviceManager.DoctorService.GetPatientReportAsync(patientId);
+                return Ok(report);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new BFCAI.Nesyan.Controllers.Errors.ApiResponse(400, ex.Message));
+            }
+        }
     }
 }

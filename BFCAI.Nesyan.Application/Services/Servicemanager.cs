@@ -65,7 +65,7 @@ namespace BFCAI.Nesyan.Application.Services
             _configuration = configuration;
             _emailService = emailService;
             _httpClientFactory = httpClientFactory;
-            _doctorService = new Lazy<IDoctorService>(() => new DoctorService(_unitOfWork, _mapper));
+            _doctorService = new Lazy<IDoctorService>(() => new DoctorService(_unitOfWork, _mapper, _httpClientFactory, _configuration));
             _patientService = new Lazy<IPatientService>(() => new PatientService(_unitOfWork, _mapper));
             _medicationService = new Lazy<IMedicationService>(() => new MedicationService(_unitOfWork, _mapper));
             _treatmentRequestService= new Lazy<ITreatmentRequestService>(()=> new TreatmentRequestService(_unitOfWork, _mapper));

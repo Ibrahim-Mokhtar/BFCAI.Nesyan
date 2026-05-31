@@ -25,5 +25,6 @@ namespace BFCAI.Nesyan.Application.Abstraction.Services.Doctors
         public  Task CreateReminderByDoctor(int doctorId, int patientId, ReminderToCreateDto dto);
         public  Task UpdateReminderByDoctor(int doctorId, int patientId, int reminderId, ReminderToUpdateDto dto);
         Task<DoctorStatisticsDto> GetDoctorStatisticsAsync(int doctorId);
+        Task<PatientReportDto> GetPatientReportAsync(int patientId);
     }
 }
