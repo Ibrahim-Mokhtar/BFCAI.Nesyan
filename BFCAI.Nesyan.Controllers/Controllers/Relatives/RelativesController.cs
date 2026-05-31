@@ -46,7 +46,7 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Relatives
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateRelative(RelativeToReturnDto dto)
+        public async Task<ActionResult> UpdateRelative([FromForm] RelativeToReturnDto dto)
         {
             try
             {

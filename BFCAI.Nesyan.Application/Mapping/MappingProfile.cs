@@ -135,7 +135,8 @@ namespace BFCAI.Nesyan.Application.Mapping
             CreateMap<Relative, RelativeToReturnDto>()
                     .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender.ToString()));
             CreateMap<RelativeToReturnDto, Relative>()
-                    .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => Enum.Parse<Gender>(src.Gender, true)));
+                    .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => Enum.Parse<Gender>(src.Gender, true)))
+                    .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
 
             // Caregivers
             CreateMap<CaregiverToCreateDto, Caregiver>()

@@ -1,4 +1,4 @@
-﻿using BFCAI.Nesyan.Application.Abstraction.Models._Relations.RelativePatient;
+using BFCAI.Nesyan.Application.Abstraction.Models._Relations.RelativePatient;
 using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
 using BFCAI.Nesyan.Application.Abstraction.Models.Reminders;
 using System;
@@ -21,6 +21,8 @@ namespace BFCAI.Nesyan.Application.Abstraction.Services._Relations
         public Task CreateReminder(int relativeId, int patientId, ReminderToCreateDto dto);
 
         public Task DeleteReminder(int relativeId, int patientId, int reminderId);
+
+        public Task DeletePatientFromRelative(int relativeId, int patientId);
 
     }
 }

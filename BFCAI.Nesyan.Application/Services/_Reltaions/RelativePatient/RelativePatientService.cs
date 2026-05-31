@@ -211,6 +211,20 @@ namespace BFCAI.Nesyan.Application.Services._Reltaions.RelativePatient
 
             await unitOfWork.CompleteAsync();
         }
+
+        public async Task DeletePatientFromRelative(int relativeId, int patientId)
+        {
+            var relationSpec = new RelativePatientCheckSpecifications(relativeId, patientId);
+
+            var relation = await unitOfWork.GetRepository<PatientRelative, int>().GetWithSpecAsync(relationSpec);
+
+            if (relation is null)
+                throw new NotFoundException(nameof(PatientRelative), new { relativeId, patientId });
+
+            unitOfWork.GetRepository<PatientRelative, int>().Delete(relation);
+
+            await unitOfWork.CompleteAsync();
+        }
     }
 
 }

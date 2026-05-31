@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace BFCAI.Nesyan.Application.Services.Relatives
 {
@@ -52,6 +54,20 @@ namespace BFCAI.Nesyan.Application.Services.Relatives
             return Mapper.Map<RelativeToReturnDto>(relative);
         }
 
+        private string SaveFile(IFormFile file, string folderName)
+        {
+            if (file == null || file.Length == 0) return string.Empty;
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", folderName);
+            if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+            var uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(fileStream);
+            }
+            return $"/uploads/{folderName}/{uniqueFileName}";
+        }
+
         public async Task UpdateRelativeAsync(RelativeToReturnDto relativeToUpdate)
         {
             var repo = UnitOfWork.GetRepository<Relative, int>();
@@ -59,6 +75,12 @@ namespace BFCAI.Nesyan.Application.Services.Relatives
             if (relative is null) throw new Exception("Relative not found");
 
             Mapper.Map(relativeToUpdate, relative);
+
+            if (relativeToUpdate.Image != null)
+            {
+                relative.ImageUrl = SaveFile(relativeToUpdate.Image, "relatives/avatars");
+            }
+
             relative.LastModifiedOn = DateTime.UtcNow;
             relative.LastModifiedBy = relative.UserName;
 

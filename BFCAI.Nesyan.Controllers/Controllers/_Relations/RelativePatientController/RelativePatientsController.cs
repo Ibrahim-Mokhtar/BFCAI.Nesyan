@@ -1,4 +1,4 @@
-﻿using BFCAI.Nesyan.Application.Abstraction.Models._Relations.RelativePatient;
+using BFCAI.Nesyan.Application.Abstraction.Models._Relations.RelativePatient;
 using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
 using BFCAI.Nesyan.Application.Abstraction.Models.Reminders;
 using BFCAI.Nesyan.Application.Abstraction.Services;
@@ -69,6 +69,13 @@ namespace BFCAI.Nesyan.Controllers.Controllers._Relations.RelativePatientControl
         public async Task<IActionResult>DeleteReminder(int relativeId,int patientId,int reminderId)
         {
             await serviceManager.RelativePatientService.DeleteReminder(relativeId,patientId,reminderId);
+            return NoContent();
+        }
+
+        [Microsoft.AspNetCore.Mvc.HttpDelete("{relativeId}/patients/{patientId}")]
+        public async Task<IActionResult> DeletePatientFromRelative(int relativeId, int patientId)
+        {
+            await serviceManager.RelativePatientService.DeletePatientFromRelative(relativeId, patientId);
             return NoContent();
         }
 
