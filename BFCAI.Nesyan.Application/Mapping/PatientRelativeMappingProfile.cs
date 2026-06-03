@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BFCAI.Nesyan.Application.Abstraction.Models._Relations.RelativePatient;
 using BFCAI.Nesyan.Application.Abstraction.Models.Appointments;
 using BFCAI.Nesyan.Application.Abstraction.Models.Assessments;
@@ -144,7 +144,22 @@ namespace BFCAI.Nesyan.Application.Mapping
                 .ForMember(
                     dest => dest.CurrentStageName,
                     opt => opt.MapFrom(src =>
-                        src.Patient.CurrentStage.ToString()));
+                        src.Patient.CurrentStage.ToString()))
+
+                .ForMember(
+                    dest => dest.Phone,
+                    opt => opt.MapFrom(src =>
+                        src.Patient.Phone))
+
+                .ForMember(
+                    dest => dest.ImageUrl,
+                    opt => opt.MapFrom(src =>
+                        src.Patient.ImageUrl))
+
+                .ForMember(
+                    dest => dest.NearestReminder,
+                    opt => opt.MapFrom(src =>
+                        GetNearestReminder(src.Patient.Reminders)));
 
 
             // ================================
@@ -181,6 +196,7 @@ namespace BFCAI.Nesyan.Application.Mapping
                     dest => dest.FullName,
                     opt => opt.MapFrom(src =>
                         $"{src.FName} {src.LName}"))
+
                 .ForMember(
                     dest => dest.CurrentStage,
                     opt => opt.MapFrom(src =>
@@ -189,7 +205,22 @@ namespace BFCAI.Nesyan.Application.Mapping
                 .ForMember(
                     dest => dest.CurrentStageName,
                     opt => opt.MapFrom(src =>
-                        src.CurrentStage.ToString()));
+                        src.CurrentStage.ToString()))
+
+                .ForMember(
+                    dest => dest.Phone,
+                    opt => opt.MapFrom(src =>
+                        src.Phone))
+
+                .ForMember(
+                    dest => dest.ImageUrl,
+                    opt => opt.MapFrom(src =>
+                        src.ImageUrl))
+
+                .ForMember(
+                    dest => dest.NearestReminder,
+                    opt => opt.MapFrom(src =>
+                        GetNearestReminder(src.Reminders)));
 
             // ================================
             // Patient -> PatientHome
@@ -316,6 +347,74 @@ namespace BFCAI.Nesyan.Application.Mapping
                                     ReminderType.Routine)));
                 CreateMap<ReminderToCreateDto, Medication>();
                 CreateMap<ReminderToUpdateDto,Medication>();
+        }
+
+        private static PatientReminderSummaryDto? GetNearestReminder(ICollection<Medication>? reminders)
+        {
+            if (reminders == null || !reminders.Any())
+                return null;
+
+            TimeZoneInfo egyptTimeZone;
+            try
+            {
+                egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                try
+                {
+                    egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Cairo");
+                }
+                catch (TimeZoneNotFoundException)
+                {
+                    egyptTimeZone = TimeZoneInfo.Local;
+                }
+            }
+
+            var localNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
+            var todayDate = DateOnly.FromDateTime(localNow);
+            var currentTime = TimeOnly.FromDateTime(localNow);
+
+            var todayReminders = reminders
+                .Where(r => {
+                    if (r.ReminderDate > todayDate)
+                        return false;
+
+                    switch (r.Frequency)
+                    {
+                        case ReminderFrequency.OneTime:
+                            return r.ReminderDate == todayDate;
+                        case ReminderFrequency.Daily:
+                            return true;
+                        case ReminderFrequency.Weekly:
+                            return r.ReminderDate.DayOfWeek == todayDate.DayOfWeek;
+                        case ReminderFrequency.Monthly:
+                            return r.ReminderDate.Day == todayDate.Day;
+                        default:
+                            return false;
+                    }
+                })
+                .ToList();
+
+            if (!todayReminders.Any())
+                return null;
+
+            var nearest = todayReminders
+                .OrderBy(r => Math.Abs((r.ReminderTime.ToTimeSpan() - currentTime.ToTimeSpan()).Ticks))
+                .First();
+
+            return new PatientReminderSummaryDto
+            {
+                Id = nearest.Id,
+                Title = nearest.Title,
+                Name = nearest.Name,
+                Dosage = nearest.Dosage,
+                Type = nearest.Type.ToString(),
+                ReminderTime = nearest.ReminderTime,
+                ReminderDate = nearest.ReminderDate,
+                Frequency = nearest.Frequency.ToString(),
+                Notes = nearest.Notes
+            };
         }
     }
 }

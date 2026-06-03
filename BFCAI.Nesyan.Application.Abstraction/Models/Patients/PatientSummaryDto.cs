@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,5 +18,8 @@ namespace BFCAI.Nesyan.Application.Abstraction.Models.Patients
 
         public int CurrentStage { get; set; }
         public string CurrentStageName { get; set; } = null!;
+        public string Phone { get; set; } = null!;
+        public string? ImageUrl { get; set; }
+        public PatientReminderSummaryDto? NearestReminder { get; set; }
     }
 }
