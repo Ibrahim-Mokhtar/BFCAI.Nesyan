@@ -1,6 +1,4 @@
-﻿using BFCAI.Nesyan.Domain.Entities.Primary.Doctors;
-using BFCAI.Nesyan.Domain.Entities.Primary.Patients;
-using BFCAI.Nesyan.Domain.Entities.Relations.Primary;
+﻿using BFCAI.Nesyan.Domain.Entities.Relations.Primary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace BFCAI.Nesyan.Domain.Specifications.RequestTreatment
 {
-    public class RelativeTreatmentRequestSpecifications:BaseSpecifications<TreatmentRequest,int>
+    public class PatientTreatmentRequestSpecifications : BaseSpecifications<TreatmentRequest, int>
     {
-        public RelativeTreatmentRequestSpecifications(int relativeId,int actorType, int? orderType )
+        public PatientTreatmentRequestSpecifications(int patientId, int actorType, int? orderType)
         {
             var status = orderType switch
             {
@@ -24,12 +22,12 @@ namespace BFCAI.Nesyan.Domain.Specifications.RequestTreatment
             };
             if (actorType == 1)
             {
-                Criteria = r => r.RelativeId == relativeId && r.DoctorId != null && r.Status == status;
+                Criteria = r => r.PatientId == patientId && r.DoctorId != null && r.Status == status;
                 AddStringinclude("Doctor");
             }
             else
             {
-                Criteria = r => r.RelativeId == relativeId && r.CaregiverId != null && r.Status == status;
+                Criteria = r => r.PatientId == patientId && r.CaregiverId != null && r.Status == status;
                 AddStringinclude("Caregiver");
             }
             AddStringinclude("Patient.Assessments");

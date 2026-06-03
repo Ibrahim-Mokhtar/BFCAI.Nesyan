@@ -185,7 +185,7 @@ namespace BFCAI.Nesyan.Application.Services.Doctors
             if (doctor == null) throw new Exception("Doctor not found");
 
 
-            var treatmentRepo = UnitOfWork.GetRepository<RelativeDoctorRequest, int>();
+            var treatmentRepo = UnitOfWork.GetRepository<TreatmentRequest, int>();
             var allRequests = await treatmentRepo.GetAllAsync();
             var acceptedPatientIds = allRequests.Where(r => r.DoctorId == doctorId && r.Status == RequestStatus.Accepted).Select(r => r.PatientId).Distinct().ToList();
 
@@ -263,7 +263,7 @@ namespace BFCAI.Nesyan.Application.Services.Doctors
         }
         public async Task<DoctorStatisticsDto> GetDoctorStatisticsAsync(int doctorId)
         {
-            var trRepo = UnitOfWork.GetRepository<RelativeDoctorRequest, int>();
+            var trRepo = UnitOfWork.GetRepository<TreatmentRequest, int>();
             var allTR = await trRepo.GetAllAsync();
 
             var totalPatients = allTR.Count(tr => tr.DoctorId == doctorId && tr.Status == RequestStatus.Accepted);

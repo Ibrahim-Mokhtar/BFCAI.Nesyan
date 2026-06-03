@@ -36,7 +36,7 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data
         public DbSet<FamilyMember> FamilyMembers { get; set; }
         public DbSet<Relative> Relatives { get; set; }
         public DbSet<Caregiver> Caregivers { get; set; }
-        public DbSet<RelativeDoctorRequest> RelativeDoctorRequests { get; set; }
+        public DbSet<TreatmentRequest> TreatmentRequest { get; set; }
         public DbSet<PatientRelative>PatientRelatives { get; set; }
         public DbSet<Alert>Alerts { get; set; }
         public DbSet<PatientRelativeAlert>PatientRelativeAlerts { get; set; }

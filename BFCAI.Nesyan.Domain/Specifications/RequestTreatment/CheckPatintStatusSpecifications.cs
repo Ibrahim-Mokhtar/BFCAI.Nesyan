@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 
 namespace BFCAI.Nesyan.Domain.Specifications.RequestTreatment
 {
-    public class CheckPatintStatusSpecifications:BaseSpecifications<RelativeDoctorRequest,int>
+    public class CheckPatintStatusSpecifications : BaseSpecifications<TreatmentRequest, int>
     {
-        public CheckPatintStatusSpecifications(int patientId)
+        public CheckPatintStatusSpecifications(int patientId, int actorType)
         {
-            Criteria=P=>P.PatientId ==patientId && P.Status==RequestStatus.Selected;
+            if (actorType == 1)
+                Criteria = P => P.PatientId == patientId && P.DoctorId != null && P.Status == RequestStatus.Selected;
+            else
+                Criteria = P => P.PatientId == patientId && P.CaregiverId != null && P.Status == RequestStatus.Selected;
         }
     }
 }

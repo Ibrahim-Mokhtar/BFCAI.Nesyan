@@ -16,7 +16,7 @@ namespace BFCAI.Nesyan.Application.Services.TreatmentRequests
         public async Task RemoveExpiredDoctors()
         {
             var specs = new ExpiredRequestsSpecifications();
-            var repo = _unitOfWork.GetRepository<RelativeDoctorRequest, int>();
+            var repo = _unitOfWork.GetRepository<TreatmentRequest, int>();
             var expiredRequests=await repo.GetAllWithSpecAsync(specs);
 
             foreach (var request in expiredRequests)
@@ -30,7 +30,11 @@ namespace BFCAI.Nesyan.Application.Services.TreatmentRequests
 
                 if (patient != null)
                 {
-                    patient.DoctorId = null;
+                    if (request.DoctorId.HasValue)
+                        patient.DoctorId = null;
+
+                    else if (request.CaregiverId.HasValue)
+                        patient.CaregiverId = null;
 
                     patientRepo.Update(patient);
                 }

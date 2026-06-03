@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Config.Relations.Primary
 {
-    internal class RelativeDoctorRequestConfigurations : BaseEntityConfigurations<RelativeDoctorRequest,int>
+    internal class TreatmentRequestConfigurations : BaseEntityConfigurations<TreatmentRequest,int>
     {
-        public override void Configure(EntityTypeBuilder<RelativeDoctorRequest> builder)
+        public override void Configure(EntityTypeBuilder<TreatmentRequest> builder)
         {
             builder.HasKey(r => r.Id);
 
@@ -32,7 +32,11 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Config.Relations.Primary
                    .WithMany()
                    .HasForeignKey(r => r.DoctorId)
                    .OnDelete(DeleteBehavior.Cascade);
-
+            
+            builder.HasOne(r => r.Caregiver)
+                   .WithMany()
+                   .HasForeignKey(r => r.CaregiverId)
+                   .OnDelete(DeleteBehavior.Cascade);
             // Status (Enum → string)
             builder.Property(r => r.Status)
                    .HasConversion<string>()
@@ -50,9 +54,17 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Config.Relations.Primary
             builder.Ignore(r => r.LastModifiedBy);
             builder.Ignore(r => r.LastModifiedOn);
 
-            builder.HasIndex(r => r.PatientId)
-                   .IsUnique()
-                   .HasFilter("[Status] = 'Accepted'"); ;
+            builder.HasIndex(x => new{x.PatientId, x.DoctorId})
+            .IsUnique()
+            .HasFilter("[Status] = 'Selected'");
+
+            builder.HasIndex(x => new { x.PatientId, x.CaregiverId })
+            .IsUnique()
+            .HasFilter("[Status] = 'Selected'");
+
+            builder.HasCheckConstraint(
+                "CK_TreatmentRequest_Target",
+                "((DoctorId IS NOT NULL AND CaregiverId IS NULL) OR (DoctorId IS NULL AND CaregiverId IS NOT NULL))");
 
         }
     }

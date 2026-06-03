@@ -8,29 +8,21 @@ using System.Threading.Tasks;
 
 namespace BFCAI.Nesyan.Domain.Specifications.RequestTreatment
 {
-    public class DoctorTreatmentRequestsSpecifications:BaseSpecifications<RelativeDoctorRequest,int>
+    public class DoctorOrCaregiverTreatmentRequestsSpecifications : BaseSpecifications<TreatmentRequest, int>
     {
-        public DoctorTreatmentRequestsSpecifications(int doctorId,int? orderType)
+        public DoctorOrCaregiverTreatmentRequestsSpecifications(int actorId, int? orderType, int actorType)
         {
-            switch (orderType)
+            var status = orderType switch
             {
-                case 1:
-                    Criteria = P => P.DoctorId == doctorId && P.Status == RequestStatus.Pending;
-                    break;
-                case 2:
-                    Criteria = P => P.DoctorId == doctorId && P.Status == RequestStatus.Selected;
-                    break;
-                case 3:
-                    Criteria = P => P.DoctorId == doctorId && P.Status == RequestStatus.Rejected;
-                    break;
-                case 4:
-                    Criteria = P => P.DoctorId == doctorId && P.Status == RequestStatus.DoctorRemovalPending;
-                    break;
-                default:
-                    Criteria = P => P.DoctorId == doctorId && P.Status == RequestStatus.Accepted;
-                    break;
-            }
-            AddStringinclude("Doctor");
+                1 => RequestStatus.Rejected,
+                2 => RequestStatus.Pending,
+                3 => RequestStatus.Accepted,
+                4 => RequestStatus.Selected,
+                5 => RequestStatus.RemovalPending,
+                _ => RequestStatus.Pending
+            };
+            Criteria = r => (actorType == 1 ? r.DoctorId == actorId : r.CaregiverId == actorId) && r.Status == status;
+            AddStringinclude(actorType == 1 ? "Doctor" : "Caregiver");
             AddStringinclude("Patient.Assessments");
             AddStringinclude("Relative");
         }

@@ -6,7 +6,8 @@ namespace BFCAI.Nesyan.Application.Abstraction.Models.TreatmentRequests
     {
         public int PatientId { get; set; }
 
-        public int DoctorId { get; set; }
+        public int? DoctorId { get; set; }
+        public int? CaregiverId { get; set; }
 
         public int RelativeId { get; set; }
 

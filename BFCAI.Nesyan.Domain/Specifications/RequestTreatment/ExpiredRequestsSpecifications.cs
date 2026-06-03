@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace BFCAI.Nesyan.Domain.Specifications.RequestTreatment
 {
-    public class ExpiredRequestsSpecifications:BaseSpecifications<RelativeDoctorRequest,int>
+    public class ExpiredRequestsSpecifications:BaseSpecifications<TreatmentRequest,int>
     {
         public ExpiredRequestsSpecifications()
         {
             Criteria= r =>
-                r.Status == RequestStatus.DoctorRemovalPending &&
+                r.Status == RequestStatus.RemovalPending &&
                 r.RequestDate <= DateTime.UtcNow.AddDays(-7);
         }
     }

@@ -22,7 +22,7 @@ namespace BFCAI.Nesyan.APIs.HangfireExtensions
                     .DoctorRemovalBackgroundService
                     .RemoveExpiredDoctors(),
 
-                Cron.Daily);
+                Cron.Daily());
         }
     }
 }

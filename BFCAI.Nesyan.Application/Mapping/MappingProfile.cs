@@ -54,10 +54,11 @@ namespace BFCAI.Nesyan.Application.Mapping
                     .ForMember(dest => dest.Gender,
                     opt => opt.MapFrom(src => Enum.Parse<Gender>(src.Gender, true)));
 
-            CreateMap<RelativeDoctorRequest, TreatmentRequestToReturnDto>()
-                .ForMember(d => d.Status, o => o.MapFrom(s => s.Status.ToString()));
+            //CreateMap<TreatmentRequest, TreatmentRequestToReturnDto>()
+            //    .ForMember( dest => dest.CaregiverSummary,opt => opt.MapFrom(src => src.Caregiver))
+            //    .ForMember(d => d.Status, o => o.MapFrom(s => s.Status.ToString()));
 
-            CreateMap<TreatmentRequestToCreateDto, RelativeDoctorRequest>()
+            CreateMap<TreatmentRequestToCreateDto, TreatmentRequest>()
                 .ForMember(d => d.RequestDate, o => o.MapFrom(s => s.RequestDate ?? DateTime.UtcNow));
 
             CreateMap<Patient, PatientToReturnDto>()
@@ -154,7 +155,7 @@ namespace BFCAI.Nesyan.Application.Mapping
                     .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
 
             // Treatment request
-           CreateMap<RelativeDoctorRequest,TreatmentRequestToReturnDto>()
+           CreateMap<TreatmentRequest,TreatmentRequestToReturnDto>()
                     .ForMember(
                         dest=>dest.requestId,
                         opt=> opt.MapFrom(
@@ -177,7 +178,7 @@ namespace BFCAI.Nesyan.Application.Mapping
                         dest => dest.Status,
                         opt => opt.MapFrom(
                             src => src.Status.ToString()))
-                    
+                    .ForMember(dest => dest.CaregiverSummary, opt => opt.MapFrom(src => src.Caregiver))
                     .ForMember(
                         dest => dest.Notes,
                         opt => opt.MapFrom(

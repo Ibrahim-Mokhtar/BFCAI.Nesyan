@@ -4,6 +4,7 @@ using BFCAI.Nesyan.Infrastructure.Presistence.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    partial class StoreContextModelSnapshot : ModelSnapshot
+    [Migration("20260602232834_TreatmentRequestModified")]
+    partial class TreatmentRequestModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1173,15 +1176,11 @@ namespace BFCAI.Nesyan.Infrastructure.Presistence.Data.Migrations
 
                     b.HasIndex("DoctorId");
 
+                    b.HasIndex("PatientId")
+                        .IsUnique()
+                        .HasFilter("[Status] = 'Selected'");
+
                     b.HasIndex("RelativeId");
-
-                    b.HasIndex("PatientId", "CaregiverId")
-                        .IsUnique()
-                        .HasFilter("[Status] = 'Selected'");
-
-                    b.HasIndex("PatientId", "DoctorId")
-                        .IsUnique()
-                        .HasFilter("[Status] = 'Selected'");
 
                     b.ToTable("TreatmentRequest", t =>
                         {
