@@ -160,6 +160,7 @@ namespace BFCAI.Nesyan.Application.Services.Auth
                 Country = dto.Country,
                 City = dto.City,
                 Age = dto.Age,
+                Specialization = dto.Specialization,
                 GraduationDegree = SaveFile(dto.GraduationDegree, "doctors/degrees"),
                 MedicalAssociationCard = SaveFile(dto.MedicalAssociationCard, "doctors/cards"),
                 CreatedBy = "System",
