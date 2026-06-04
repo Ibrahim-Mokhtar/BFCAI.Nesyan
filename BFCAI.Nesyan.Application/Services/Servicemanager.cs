@@ -75,7 +75,7 @@ namespace BFCAI.Nesyan.Application.Services
             _caregiverService = new Lazy<BFCAI.Nesyan.Application.Abstraction.Services.Caregivers.ICaregiverService>(() => new CaregiverService(_unitOfWork, _mapper));
             _telemetryService = new Lazy<ITelemetryService>(() => new TelemetryService(telemetryStore, _unitOfWork));
             _relativePatientService = new Lazy<IRelativePatientService>(() => new RelativePatientService(_unitOfWork, _mapper, _emailService));
-            _familyMembersService = new Lazy<IFamilyMembersService>(() => new FamilyMembersService(_unitOfWork, _mapper));
+            _familyMembersService = new Lazy<IFamilyMembersService>(() => new FamilyMembersService(_unitOfWork, _mapper, _httpClientFactory, _configuration));
             _doctorRemovalBackgroundService = new Lazy<IDoctorRemovalBackgroundService>(()=>new DoctorRemovalBackgroundService(_unitOfWork));
             _locationService = new Lazy<ILocationService>(() => new LocationService(_unitOfWork));
         }

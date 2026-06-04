@@ -2,6 +2,7 @@ using BFCAI.Nesyan.Application.Abstraction.Models.Patients;
 using BFCAI.Nesyan.Application.Abstraction.Services;
 using BFCAI.Nesyan.Controllers.Controllers.Base;
 using BFCAI.Nesyan.Controllers.Errors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -68,5 +69,30 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Patients
                 return BadRequest(new ApiResponse(400, ex.Message));
             }
         }
+
+        [HttpPost("patient/{patientId}/identify-voice")]
+        public async Task<ActionResult<FamilyMemberDto>> IdentifyVoice(int patientId, [FromForm] VoiceIdentifyDto dto)
+        {
+            try
+            {
+                if (dto.Audio == null || dto.Audio.Length == 0)
+                    return BadRequest(new ApiResponse(400, "Audio file is required."));
+
+                var member = await serviceManager.FamilyMembersService.IdentifySpeakerVoiceAsync(patientId, dto.Audio);
+                if (member == null)
+                    return NotFound(new ApiResponse(404, "Speaker could not be identified or matched with any family member profile."));
+
+                return Ok(member);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse(400, ex.Message));
+            }
+        }
+    }
+
+    public class VoiceIdentifyDto
+    {
+        public IFormFile Audio { get; set; } = null!;
     }
 }
