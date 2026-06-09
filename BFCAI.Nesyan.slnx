@@ -16,5 +16,7 @@
   <Folder Name="/src/UI/" />
   <Folder Name="/src/UI/Client/" />
   <Folder Name="/src/UI/Dashboard/" />
-  <Folder Name="/test/" />
+  <Folder Name="/test/">
+    <Project Path="BFCAI.Nesyan.Tests/BFCAI.Nesyan.Tests.csproj" />
+  </Folder>
 </Solution>

@@ -5,6 +5,7 @@ using BFCAI.Nesyan.Controllers.Errors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BFCAI.Nesyan.Controllers.Controllers.Location
@@ -129,14 +130,17 @@ namespace BFCAI.Nesyan.Controllers.Controllers.Location
         }
 
         [HttpGet("location/history")]
-        public async Task<IActionResult> GetLocationHistory(int patientId, [FromQuery] DateTime from, [FromQuery] DateTime to, [FromQuery] int limit = 100)
+        public async Task<IActionResult> GetLocationHistory(int patientId, [FromQuery] DateOnly from, [FromQuery] DateOnly to, [FromQuery] int limit = 100)
         {
             if (from == default || to == default)
                 return BadRequest(new ApiResponse(400, "Both 'from' and 'to' date parameters are required and must be valid ISO dates."));
 
             try
             {
-                var result = await _serviceManager.LocationService.GetLocationHistoryAsync(patientId, from, to, limit);
+                var result = await _serviceManager.LocationService.GetLocationHistoryAsync(patientId, from.ToDateTime(TimeOnly.MinValue), to.ToDateTime(TimeOnly.MaxValue), limit);
+                if (result == null || !result.Any())
+                    return NoContent();
+
                 return Ok(result);
             }
             catch (Exception ex)
